@@ -5,14 +5,7 @@ export const kpis = {
   totalNadia: 6373,
   adoptionRate: 43.6,
   totalConversations: 50218,
-  activeLast30: 2923,
-  activeLast30Pct: 45.9,
-  activeLast60: 3572,
-  activeLast90: 4815,
-  medianConvos: 3,
-  meanConvos: 7.9,
-  maxConvos: 486,
-  usersWith10Plus: 1025,
+  avgConvos: 7.9,
 };
 
 export const engagementTiers = [
@@ -30,148 +23,227 @@ export const integrationEffect = [
   { label: 'Neither', users: 3572, avgConvos: 5.3 },
 ];
 
-export const retentionVsChurn = [
-  { label: 'Retained (<90d)', count: 4815, pct: 75.6, avgConvos: 9.6, teamsPct: 51, calPct: 31, goalsPct: 46 },
-  { label: 'Churned (>90d)', count: 1558, pct: 24.4, avgConvos: 2.5, teamsPct: 12, calPct: 6, goalsPct: 0 },
+export const integrationImpact = [
+  { factor: 'Connect Session Used', with: 27.4, withN: 121, without: 7.5, withoutN: 6252, multiplier: '3.7x' },
+  { factor: 'Teams Connected', with: 11.0, withN: 2632, without: 5.7, withoutN: 3741, multiplier: '1.9x' },
+  { factor: 'Calendar Connected', with: 12.3, withN: 1572, without: 6.4, withoutN: 4801, multiplier: '1.9x' },
+  { factor: 'Both Integrations', with: 12.2, withN: 1403, without: 6.7, withoutN: 4970, multiplier: '1.8x' },
+  { factor: 'Goal Session Completed', with: 11.0, withN: 2211, without: 6.2, withoutN: 4162, multiplier: '1.8x' },
+  { factor: 'Frontline Leader', with: 10.2, withN: 1373, without: 7.2, withoutN: 5000, multiplier: '1.4x' },
+  { factor: 'Manager (vs IC)', with: 8.1, withN: 4452, without: 7.4, withoutN: 1921, multiplier: '1.1x' },
 ];
 
 export const buData = [
-  { bu: 'HR & Labor', pop: 549, nadia: 456, rate: 83.1, avgConvos: 11.2, median: 4, teamsPct: 48, active30Pct: 57 },
-  { bu: 'Legal', pop: 77, nadia: 61, rate: 79.2, avgConvos: 4.8, median: 3, teamsPct: 66, active30Pct: 90 },
-  { bu: 'Reservations & Cust. Care', pop: 369, nadia: 247, rate: 66.9, avgConvos: 20.1, median: 6, teamsPct: 56, active30Pct: 59 },
-  { bu: 'Revenue Management', pop: 333, nadia: 214, rate: 64.3, avgConvos: 7.4, median: 3, teamsPct: 52, active30Pct: 56 },
-  { bu: 'Inflight Services', pop: 722, nadia: 432, rate: 59.8, avgConvos: 12.0, median: 3, teamsPct: 49, active30Pct: 53 },
-  { bu: 'Airport Customer Service', pop: 1719, nadia: 957, rate: 55.7, avgConvos: 10.5, median: 3, teamsPct: 34, active30Pct: 43 },
-  { bu: 'Cargo', pop: 153, nadia: 80, rate: 52.3, avgConvos: 13.8, median: 4, teamsPct: 42, active30Pct: 56 },
-  { bu: 'Global Sales', pop: 887, nadia: 478, rate: 53.9, avgConvos: 8.5, median: 3, teamsPct: 42, active30Pct: 39 },
-  { bu: 'Customer Eng. & Loyalty', pop: 127, nadia: 63, rate: 49.6, avgConvos: 5.5, median: 3, teamsPct: 41, active30Pct: 44 },
-  { bu: 'Network Planning', pop: 119, nadia: 55, rate: 46.2, avgConvos: 3.7, median: 2, teamsPct: 42, active30Pct: 42 },
-  { bu: 'On-Board Services', pop: 261, nadia: 112, rate: 42.9, avgConvos: 7.1, median: 2, teamsPct: 37, active30Pct: 34 },
-  { bu: 'Enterprise Digital Strategy', pop: 207, nadia: 89, rate: 43.0, avgConvos: 4.4, median: 2, teamsPct: 46, active30Pct: 46 },
-  { bu: 'Finance', pop: 484, nadia: 183, rate: 37.8, avgConvos: 3.6, median: 2, teamsPct: 40, active30Pct: 52 },
-  { bu: 'Information Technology', pop: 2099, nadia: 705, rate: 33.6, avgConvos: 4.5, median: 2, teamsPct: 40, active30Pct: 27 },
-  { bu: 'TechOps', pop: 2331, nadia: 719, rate: 30.8, avgConvos: 5.5, median: 2, teamsPct: 35, active30Pct: 43 },
-  { bu: 'GTH Information Technology', pop: 740, nadia: 208, rate: 28.1, avgConvos: 3.2, median: 2, teamsPct: 31, active30Pct: 15 },
-  { bu: 'DLV Operations', pop: 408, nadia: 60, rate: 14.7, avgConvos: 25.8, median: 6, teamsPct: 70, active30Pct: 65 },
-  { bu: 'Delta Professional Services', pop: 450, nadia: 22, rate: 4.9, avgConvos: 3.3, median: 2, teamsPct: 50, active30Pct: 45 },
+  { bu: 'TechOps', pop: 2331, nadia: 719, rate: 30.8, avgConvos: 5.5, teamsPct: 35, calPct: 19 },
+  { bu: 'Information Technology', pop: 2099, nadia: 705, rate: 33.6, avgConvos: 4.5, teamsPct: 40, calPct: 25 },
+  { bu: 'Airport Customer Service', pop: 1719, nadia: 957, rate: 55.7, avgConvos: 10.5, teamsPct: 34, calPct: 22 },
+  { bu: 'Global Sales', pop: 887, nadia: 478, rate: 53.9, avgConvos: 8.5, teamsPct: 42, calPct: 20 },
+  { bu: 'GTH Information Technology', pop: 740, nadia: 208, rate: 28.1, avgConvos: 3.2, teamsPct: 31, calPct: 17 },
+  { bu: 'Inflight Services', pop: 722, nadia: 432, rate: 59.8, avgConvos: 12.0, teamsPct: 49, calPct: 28 },
+  { bu: 'HR & Labor', pop: 549, nadia: 456, rate: 83.1, avgConvos: 11.2, teamsPct: 48, calPct: 27 },
+  { bu: 'Finance', pop: 484, nadia: 183, rate: 37.8, avgConvos: 3.6, teamsPct: 40, calPct: 26 },
+  { bu: 'Delta Professional Services', pop: 450, nadia: 22, rate: 4.9, avgConvos: 3.3, teamsPct: 32, calPct: 27 },
+  { bu: 'DLV Operations', pop: 408, nadia: 60, rate: 14.7, avgConvos: 25.8, teamsPct: 70, calPct: 43 },
+  { bu: 'Reservations & Cust. Care', pop: 369, nadia: 247, rate: 66.9, avgConvos: 20.1, teamsPct: 56, calPct: 36 },
+  { bu: 'Flight Ops', pop: 356, nadia: 82, rate: 23.0, avgConvos: 8.5, teamsPct: 40, calPct: 33 },
+  { bu: 'Revenue Management', pop: 333, nadia: 214, rate: 64.3, avgConvos: 7.4, teamsPct: 52, calPct: 29 },
+  { bu: 'On-Board Services', pop: 261, nadia: 112, rate: 42.9, avgConvos: 7.1, teamsPct: 37, calPct: 23 },
+  { bu: 'Crew Resources', pop: 256, nadia: 72, rate: 28.1, avgConvos: 3.0, teamsPct: 25, calPct: 15 },
+  { bu: 'Enterprise Digital Strategy', pop: 207, nadia: 89, rate: 43.0, avgConvos: 4.4, teamsPct: 46, calPct: 29 },
+  { bu: 'Marketing & Prod Dev', pop: 204, nadia: 59, rate: 28.9, avgConvos: 6.9, teamsPct: 31, calPct: 19 },
+  { bu: 'Cargo', pop: 153, nadia: 80, rate: 52.3, avgConvos: 13.8, teamsPct: 42, calPct: 30 },
+  { bu: 'Cargo Commercial', pop: 141, nadia: 32, rate: 22.7, avgConvos: 3.2, teamsPct: 41, calPct: 31 },
 ];
 
 export const gradeData = [
-  { grade: '1-2', pop: 365, rate: 4.1, avgConvos: 2.3, trialPct: 91, powerPct: 9 },
-  { grade: '3-4', pop: 268, rate: 38.4, avgConvos: 3.9, trialPct: 50, powerPct: 3 },
-  { grade: '5', pop: 834, rate: 32.5, avgConvos: 7.5, trialPct: 58, powerPct: 11 },
-  { grade: '6', pop: 2189, rate: 34.4, avgConvos: 7.3, trialPct: 54, powerPct: 12 },
-  { grade: '7', pop: 2296, rate: 38.0, avgConvos: 6.2, trialPct: 53, powerPct: 11 },
-  { grade: '7S', pop: 1324, rate: 60.6, avgConvos: 11.5, trialPct: 42, powerPct: 23 },
-  { grade: '8', pop: 1237, rate: 52.1, avgConvos: 8.7, trialPct: 41, powerPct: 17 },
-  { grade: '9', pop: 1994, rate: 34.5, avgConvos: 4.9, trialPct: 63, powerPct: 7 },
-  { grade: '9S', pop: 167, rate: 47.3, avgConvos: 8.2, trialPct: 47, powerPct: 15 },
-  { grade: '10', pop: 1942, rate: 53.4, avgConvos: 10.5, trialPct: 40, powerPct: 21 },
-  { grade: '11', pop: 804, rate: 54.5, avgConvos: 8.4, trialPct: 40, powerPct: 18 },
-  { grade: '12', pop: 330, rate: 53.3, avgConvos: 5.4, trialPct: 43, powerPct: 10 },
-  { grade: '13', pop: 169, rate: 49.1, avgConvos: 5.9, trialPct: 36, powerPct: 14 },
-  { grade: '14+', pop: 127, rate: 25.2, avgConvos: 2.7, trialPct: 59, powerPct: 0 },
+  { grade: '7', pop: 2296, nadia: 872, rate: 38.0, avgConvos: 6.2, teamsPct: 42, calPct: 22 },
+  { grade: '6', pop: 2189, nadia: 752, rate: 34.4, avgConvos: 7.3, teamsPct: 36, calPct: 21 },
+  { grade: '9', pop: 1994, nadia: 688, rate: 34.5, avgConvos: 4.9, teamsPct: 39, calPct: 24 },
+  { grade: '10', pop: 1942, nadia: 1037, rate: 53.4, avgConvos: 10.5, teamsPct: 46, calPct: 30 },
+  { grade: '7S', pop: 1324, nadia: 802, rate: 60.6, avgConvos: 11.5, teamsPct: 36, calPct: 22 },
+  { grade: '8', pop: 1237, nadia: 644, rate: 52.1, avgConvos: 8.7, teamsPct: 44, calPct: 27 },
+  { grade: '5', pop: 834, nadia: 271, rate: 32.5, avgConvos: 7.5, teamsPct: 42, calPct: 20 },
+  { grade: '11', pop: 804, nadia: 438, rate: 54.5, avgConvos: 8.4, teamsPct: 46, calPct: 28 },
+  { grade: '12', pop: 330, nadia: 176, rate: 53.3, avgConvos: 5.4, teamsPct: 48, calPct: 28 },
+  { grade: '4', pop: 232, nadia: 85, rate: 36.6, avgConvos: 4.1, teamsPct: 34, calPct: 18 },
+  { grade: '13', pop: 169, nadia: 83, rate: 49.1, avgConvos: 5.9, teamsPct: 43, calPct: 30 },
+  { grade: '9S', pop: 167, nadia: 79, rate: 47.3, avgConvos: 8.2, teamsPct: 28, calPct: 24 },
+  { grade: '14', pop: 57, nadia: 24, rate: 42.1, avgConvos: 3.2, teamsPct: 50, calPct: 33 },
+  { grade: '15+', pop: 39, nadia: 9, rate: 23.1, avgConvos: 1.4, teamsPct: 22, calPct: 22 },
 ];
 
 export const careerLevelData = [
-  { level: 'Frontline Leader (No TechOps)', pop: 1501, rate: 61.1, avgConvos: 11.5 },
-  { level: 'Sr. Manager', pop: 1457, rate: 58.5, avgConvos: 11.8 },
-  { level: 'Manager', pop: 695, rate: 54.8, avgConvos: 9.9 },
-  { level: 'General Manager', pop: 740, rate: 54.6, avgConvos: 8.9 },
-  { level: 'Director', pop: 325, rate: 53.2, avgConvos: 5.4 },
-  { level: 'Lead/Adv. Specialist', pop: 478, rate: 47.9, avgConvos: 7.1 },
-  { level: 'Managing Director', pop: 168, rate: 49.4, avgConvos: 5.9 },
-  { level: 'Frontline Leader (TechOps)', pop: 173, rate: 45.7, avgConvos: 8.2 },
-  { level: 'VP', pop: 57, rate: 42.1, avgConvos: 3.2 },
-  { level: 'Specialist', pop: 2016, rate: 38.2, avgConvos: 5.8 },
-  { level: 'Advanced Specialist', pop: 1977, rate: 34.3, avgConvos: 4.9 },
-  { level: 'Sr. Analyst', pop: 1246, rate: 32.9, avgConvos: 6.9 },
-  { level: 'Analyst', pop: 363, rate: 31.1, avgConvos: 6.1 },
-  { level: 'Sr. VP', pop: 30, rate: 23.3, avgConvos: 1.6 },
-];
-
-export const subFamilyData = [
-  { sf: 'Customer Contact Center', pop: 162, rate: 79.0, avgConvos: 21.2, powerPct: 45 },
-  { sf: 'Talent Management', pop: 40, rate: 92.5, avgConvos: 21.0, powerPct: 51 },
-  { sf: 'Training Design', pop: 156, rate: 65.4, avgConvos: 17.6, powerPct: 25 },
-  { sf: 'Business Ops Strategy', pop: 177, rate: 48.0, avgConvos: 13.1, powerPct: 19 },
-  { sf: 'Field Operations', pop: 65, rate: 53.8, avgConvos: 13.2, powerPct: 20 },
-  { sf: 'Employee Health & Safety', pop: 171, rate: 50.9, avgConvos: 12.3, powerPct: 23 },
-  { sf: 'Inflight Services', pop: 365, rate: 65.8, avgConvos: 12.0, powerPct: 24 },
-  { sf: 'Cargo', pop: 83, rate: 57.8, avgConvos: 11.6, powerPct: 23 },
-  { sf: 'Airport Operations', pop: 1473, rate: 56.2, avgConvos: 10.9, powerPct: 20 },
-  { sf: 'Crew Scheduling & Tracking', pop: 173, rate: 13.3, avgConvos: 10.2, powerPct: 4 },
-  { sf: 'Account Mgmt & Field Sales', pop: 409, rate: 53.3, avgConvos: 9.9, powerPct: 19 },
-  { sf: 'Software Product Engineering', pop: 911, rate: 33.8, avgConvos: 3.7, powerPct: 6 },
+  { level: 'Frontline Leader', pop: 1501, nadia: 917, rate: 61.1, avgConvos: 11.5 },
+  { level: 'Sr. Manager', pop: 1457, nadia: 852, rate: 58.5, avgConvos: 11.8 },
+  { level: 'Manager', pop: 695, nadia: 381, rate: 54.8, avgConvos: 9.9 },
+  { level: 'General Manager', pop: 740, nadia: 404, rate: 54.6, avgConvos: 8.9 },
+  { level: 'Director', pop: 325, nadia: 173, rate: 53.2, avgConvos: 5.4 },
+  { level: 'Lead/Adv. Specialist', pop: 478, nadia: 229, rate: 47.9, avgConvos: 7.1 },
+  { level: 'Managing Director', pop: 168, nadia: 83, rate: 49.4, avgConvos: 5.9 },
+  { level: 'FLL (TechOps)', pop: 173, nadia: 79, rate: 45.7, avgConvos: 8.2 },
+  { level: 'VP', pop: 57, nadia: 24, rate: 42.1, avgConvos: 3.2 },
+  { level: 'Specialist', pop: 2016, nadia: 771, rate: 38.2, avgConvos: 5.8 },
+  { level: 'Adv. Specialist', pop: 1977, nadia: 678, rate: 34.3, avgConvos: 4.9 },
+  { level: 'Sr. Analyst', pop: 1246, nadia: 410, rate: 32.9, avgConvos: 6.9 },
+  { level: 'Analyst', pop: 363, nadia: 113, rate: 31.1, avgConvos: 6.1 },
+  { level: 'Sr. VP', pop: 30, nadia: 7, rate: 23.3, avgConvos: 1.6 },
 ];
 
 export const fllData = {
   fllInNadia: 1373, fllAvgConvos: 10.2, fllTeams: 37,
-  scaleInNadia: 4646, scaleAvgConvos: 7.4, scaleTeams: 41,
   connectUsers: 61, connectAvgConvos: 31.1,
   noConnectUsers: 1312, noConnectAvgConvos: 9.3,
   fllByBu: [
-    { bu: 'Reservations & Cust. Care', total: 119, nadia: 96, rate: 80.7 },
-    { bu: 'Inflight Services', total: 336, nadia: 209, rate: 62.2 },
-    { bu: 'Airport Customer Service', total: 950, nadia: 566, rate: 59.6 },
-    { bu: 'Cargo', total: 57, nadia: 28, rate: 49.1 },
-    { bu: 'TechOps', total: 180, nadia: 80, rate: 44.4 },
+    { bu: 'Airport Customer Service', total: 950, nadia: 566, rate: 59.6, teamsPct: 30, calPct: 19, avgConvos: 11.1 },
+    { bu: 'Inflight Services', total: 336, nadia: 209, rate: 62.2, teamsPct: 46, calPct: 24, avgConvos: 9.7 },
+    { bu: 'TechOps', total: 180, nadia: 80, rate: 44.4, teamsPct: 26, calPct: 19, avgConvos: 7.7 },
+    { bu: 'Reservations & Cust. Care', total: 119, nadia: 96, rate: 80.7, teamsPct: 58, calPct: 40, avgConvos: 19.8 },
+    { bu: 'Cargo', total: 57, nadia: 28, rate: 49.1, teamsPct: 32, calPct: 36, avgConvos: 9.9 },
   ],
 };
 
-export const beyondPerfMgmt = {
-  withGoals: { count: 2211, pct: 34.7, avgConvos: 11.0 },
-  withoutGoals: { count: 4162, pct: 65.3, avgConvos: 6.2 },
-  organicCoaching: { count: 1748, pct: 27.4 },
-  trialOnly: { count: 2414, pct: 37.9 },
-};
-
-export const skillsExhibited = [
-  { skill: 'Communication', count: 4033 },
-  { skill: 'Strategic Thinking', count: 1660 },
-  { skill: 'Accountability', count: 1197 },
-  { skill: 'Managing Performance', count: 790 },
-  { skill: 'Decision Making', count: 761 },
-  { skill: 'Analytical Skills', count: 697 },
-  { skill: 'Digital Fluency', count: 650 },
-  { skill: 'Organizational Skills', count: 568 },
-  { skill: 'Developing Others', count: 531 },
-  { skill: 'Emotional Intelligence', count: 486 },
+// ─── SKILLS LANDSCAPE (all users, top skills) ───
+export const skillsLandscape = [
+  { skill: 'Communication', exhibited: 4033, exhibitedPct: 63.3, opportunity: 1760, opportunityPct: 27.6 },
+  { skill: 'Strategic Thinking', exhibited: 1660, exhibitedPct: 26.0, opportunity: 546, opportunityPct: 8.6 },
+  { skill: 'Accountability', exhibited: 1197, exhibitedPct: 18.8, opportunity: 652, opportunityPct: 10.2 },
+  { skill: 'Managing Performance', exhibited: 790, exhibitedPct: 12.4, opportunity: 450, opportunityPct: 7.1 },
+  { skill: 'Decision Making', exhibited: 761, exhibitedPct: 11.9, opportunity: 153, opportunityPct: 2.4 },
+  { skill: 'Analytical Skills', exhibited: 697, exhibitedPct: 10.9, opportunity: 158, opportunityPct: 2.5 },
+  { skill: 'Digital Fluency', exhibited: 650, exhibitedPct: 10.2, opportunity: 519, opportunityPct: 8.1 },
+  { skill: 'Organizational Skills', exhibited: 568, exhibitedPct: 8.9, opportunity: 283, opportunityPct: 4.4 },
+  { skill: 'Developing Others', exhibited: 531, exhibitedPct: 8.3, opportunity: 402, opportunityPct: 6.3 },
+  { skill: 'Emotional Intelligence', exhibited: 486, exhibitedPct: 7.6, opportunity: 372, opportunityPct: 5.8 },
+  { skill: 'Detail Oriented', exhibited: 435, exhibitedPct: 6.8, opportunity: 150, opportunityPct: 2.4 },
+  { skill: 'Teamwork', exhibited: 349, exhibitedPct: 5.5, opportunity: 176, opportunityPct: 2.8 },
+  { skill: 'Servant Leadership', exhibited: 209, exhibitedPct: 3.3, opportunity: 135, opportunityPct: 2.1 },
+  { skill: 'Influencing Skills', exhibited: 168, exhibitedPct: 2.6, opportunity: 553, opportunityPct: 8.7 },
+  { skill: 'Adaptability', exhibited: 157, exhibitedPct: 2.5, opportunity: 124, opportunityPct: 1.9 },
 ];
 
-export const skillGaps = [
-  { skill: 'Influencing Skills', exhibited: 168, opportunity: 553, ratio: 3.29 },
-  { skill: 'Digital Fluency', exhibited: 650, opportunity: 519, ratio: 0.80 },
-  { skill: 'Adaptability', exhibited: 157, opportunity: 124, ratio: 0.79 },
-  { skill: 'Emotional Intelligence', exhibited: 486, opportunity: 372, ratio: 0.77 },
-  { skill: 'Developing Others', exhibited: 531, opportunity: 402, ratio: 0.76 },
-  { skill: 'Servant Leadership', exhibited: 209, opportunity: 135, ratio: 0.65 },
-  { skill: 'Managing Performance', exhibited: 790, opportunity: 450, ratio: 0.57 },
-  { skill: 'Accountability', exhibited: 1197, opportunity: 652, ratio: 0.54 },
-  { skill: 'Communication', exhibited: 4033, opportunity: 1760, ratio: 0.44 },
-];
-
-export const skillsByPopulation = {
-  corporateManagers: {
-    exhibited: ['Communication (2,000)', 'Strategic Thinking (1,332)', 'Accountability (676)', 'Managing Performance (593)', 'Decision Making (586)'],
-    opportunity: ['Communication (1,000)', 'Influencing Skills (438)', 'Strategic Thinking (400)', 'Accountability (344)', 'Developing Others (300)'],
+// Skills filters by BU (top 5 exhibited + opportunity per BU)
+export const skillsFilterBu = {
+  'Airport Customer Service': {
+    exhibited: [{ skill: 'Communication', count: 610 }, { skill: 'Managing Performance', count: 141 }, { skill: 'Accountability', count: 140 }, { skill: 'Strategic Thinking', count: 133 }, { skill: 'Developing Others', count: 95 }],
+    opportunity: [{ skill: 'Communication', count: 246 }, { skill: 'Accountability', count: 114 }, { skill: 'Managing Performance', count: 86 }, { skill: 'Strategic Thinking', count: 85 }, { skill: 'Developing Others', count: 75 }],
   },
-  frontlineLeaders: {
-    exhibited: ['Communication (889)', 'Accountability (272)', 'Strategic Thinking (254)', 'Managing Performance (176)', 'Digital Fluency (135)'],
-    opportunity: ['Communication (348)', 'Accountability (155)', 'Managing Performance (130)', 'Strategic Thinking (122)', 'Digital Fluency (101)'],
+  'TechOps': {
+    exhibited: [{ skill: 'Communication', count: 393 }, { skill: 'Strategic Thinking', count: 165 }, { skill: 'Accountability', count: 151 }, { skill: 'Managing Performance', count: 100 }, { skill: 'Decision Making', count: 79 }],
+    opportunity: [{ skill: 'Communication', count: 176 }, { skill: 'Accountability', count: 64 }, { skill: 'Digital Fluency', count: 53 }, { skill: 'Emotional Intelligence', count: 42 }, { skill: 'Strategic Thinking', count: 42 }],
   },
-  scaleICs: {
-    exhibited: ['Communication (899)', 'Analytical Skills (547)', 'Organizational Skills (424)', 'Detail Oriented (328)', 'Teamwork (245)'],
-    opportunity: ['Communication (339)', 'Organizational Skills (201)', 'Teamwork (129)', 'Accountability (127)', 'Digital Fluency (105)'],
+  'Information Technology': {
+    exhibited: [{ skill: 'Communication', count: 367 }, { skill: 'Accountability', count: 177 }, { skill: 'Strategic Thinking', count: 160 }, { skill: 'Digital Fluency', count: 157 }, { skill: 'Analytical Skills', count: 112 }],
+    opportunity: [{ skill: 'Communication', count: 192 }, { skill: 'Digital Fluency', count: 71 }, { skill: 'Accountability', count: 64 }, { skill: 'Influencing Skills', count: 60 }, { skill: 'Strategic Thinking', count: 47 }],
+  },
+  'Global Sales': {
+    exhibited: [{ skill: 'Communication', count: 324 }, { skill: 'Strategic Thinking', count: 136 }, { skill: 'Accountability', count: 87 }, { skill: 'Managing Performance', count: 52 }, { skill: 'Decision Making', count: 45 }],
+    opportunity: [{ skill: 'Communication', count: 142 }, { skill: 'Digital Fluency', count: 56 }, { skill: 'Strategic Thinking', count: 49 }, { skill: 'Influencing Skills', count: 45 }, { skill: 'Accountability', count: 40 }],
+  },
+  'Inflight Services': {
+    exhibited: [{ skill: 'Communication', count: 299 }, { skill: 'Strategic Thinking', count: 90 }, { skill: 'Accountability', count: 70 }, { skill: 'Managing Performance', count: 62 }, { skill: 'Emotional Intelligence', count: 54 }],
+    opportunity: [{ skill: 'Communication', count: 112 }, { skill: 'Strategic Thinking', count: 56 }, { skill: 'Accountability', count: 56 }, { skill: 'Managing Performance', count: 44 }, { skill: 'Influencing Skills', count: 42 }],
+  },
+  'HR & Labor': {
+    exhibited: [{ skill: 'Communication', count: 315 }, { skill: 'Strategic Thinking', count: 96 }, { skill: 'Accountability', count: 55 }, { skill: 'Decision Making', count: 51 }, { skill: 'Analytical Skills', count: 41 }],
+    opportunity: [{ skill: 'Communication', count: 154 }, { skill: 'Accountability', count: 53 }, { skill: 'Strategic Thinking', count: 42 }, { skill: 'Influencing Skills', count: 41 }, { skill: 'Emotional Intelligence', count: 38 }],
+  },
+  'Reservations & Cust. Care': {
+    exhibited: [{ skill: 'Communication', count: 172 }, { skill: 'Strategic Thinking', count: 41 }, { skill: 'Managing Performance', count: 27 }, { skill: 'Analytical Skills', count: 25 }, { skill: 'Accountability', count: 23 }],
+    opportunity: [{ skill: 'Communication', count: 87 }, { skill: 'Influencing Skills', count: 31 }, { skill: 'Digital Fluency', count: 30 }, { skill: 'Strategic Thinking', count: 28 }, { skill: 'Accountability', count: 27 }],
+  },
+  'Revenue Management': {
+    exhibited: [{ skill: 'Communication', count: 128 }, { skill: 'Strategic Thinking', count: 64 }, { skill: 'Analytical Skills', count: 33 }, { skill: 'Accountability', count: 31 }, { skill: 'Developing Others', count: 26 }],
+    opportunity: [{ skill: 'Communication', count: 84 }, { skill: 'Strategic Thinking', count: 23 }, { skill: 'Accountability', count: 19 }, { skill: 'Influencing Skills', count: 16 }, { skill: 'Developing Others', count: 15 }],
   },
 };
 
-export const skillsByGradeBand = [
-  { band: 'Entry (1-4)', opp: ['Communication', 'Org. Skills', 'Accountability', 'Analytical', 'Emotional Intel.'] },
-  { band: 'Mid (5-7)', opp: ['Communication', 'Digital Fluency', 'Accountability', 'Strategic Thinking', 'Org. Skills'] },
-  { band: 'Senior (8-10)', opp: ['Communication', 'Influencing', 'Accountability', 'Strategic Thinking', 'Managing Perf.'] },
-  { band: 'Leadership (11-13)', opp: ['Communication', 'Accountability', 'Strategic Thinking', 'Influencing', 'Developing Others'] },
-  { band: 'Executive (14+)', opp: ['Influencing', 'Strategic Thinking', 'Accountability', 'Communication', 'Developing Others'] },
+// Skills filters by grade band
+export const skillsFilterGrade = {
+  'Entry (4-5)': {
+    exhibited: [{ skill: 'Communication', count: 208 }, { skill: 'Accountability', count: 76 }, { skill: 'Organizational Skills', count: 66 }, { skill: 'Detail Oriented', count: 58 }, { skill: 'Analytical Skills', count: 54 }],
+    opportunity: [{ skill: 'Communication', count: 90 }, { skill: 'Organizational Skills', count: 29 }, { skill: 'Analytical Skills', count: 24 }, { skill: 'Accountability', count: 24 }, { skill: 'Digital Fluency', count: 23 }],
+  },
+  'Mid (6-7)': {
+    exhibited: [{ skill: 'Communication', count: 1485 }, { skill: 'Accountability', count: 461 }, { skill: 'Strategic Thinking', count: 442 }, { skill: 'Analytical Skills', count: 311 }, { skill: 'Organizational Skills', count: 248 }],
+    opportunity: [{ skill: 'Communication', count: 579 }, { skill: 'Digital Fluency', count: 223 }, { skill: 'Accountability', count: 215 }, { skill: 'Strategic Thinking', count: 167 }, { skill: 'Influencing Skills', count: 142 }],
+  },
+  'Senior (8-10)': {
+    exhibited: [{ skill: 'Communication', count: 1457 }, { skill: 'Strategic Thinking', count: 709 }, { skill: 'Accountability', count: 432 }, { skill: 'Managing Performance', count: 381 }, { skill: 'Decision Making', count: 308 }],
+    opportunity: [{ skill: 'Communication', count: 755 }, { skill: 'Influencing Skills', count: 265 }, { skill: 'Accountability', count: 253 }, { skill: 'Strategic Thinking', count: 240 }, { skill: 'Managing Performance', count: 194 }],
+  },
+  'Leadership (11-13)': {
+    exhibited: [{ skill: 'Communication', count: 420 }, { skill: 'Strategic Thinking', count: 240 }, { skill: 'Managing Performance', count: 136 }, { skill: 'Accountability', count: 97 }, { skill: 'Developing Others', count: 97 }],
+    opportunity: [{ skill: 'Communication', count: 209 }, { skill: 'Accountability', count: 106 }, { skill: 'Strategic Thinking', count: 102 }, { skill: 'Influencing Skills', count: 94 }, { skill: 'Developing Others', count: 78 }],
+  },
+  'Executive (14+)': {
+    exhibited: [{ skill: 'Communication', count: 16 }, { skill: 'Managing Performance', count: 12 }, { skill: 'Strategic Thinking', count: 11 }, { skill: 'Developing Others', count: 4 }, { skill: 'Decision Making', count: 3 }],
+    opportunity: [{ skill: 'Influencing Skills', count: 6 }, { skill: 'Strategic Thinking', count: 6 }, { skill: 'Accountability', count: 6 }, { skill: 'Communication', count: 3 }, { skill: 'Developing Others', count: 3 }],
+  },
+};
+
+// Skills needed for goal achievement cross-referenced with exhibited/opportunity
+export const goalSkillsAnalysis = [
+  { skill: 'Strategic Thinking', neededForGoals: 811, exhibited: 1660, opportunity: 546 },
+  { skill: 'Communication', neededForGoals: 546, exhibited: 4033, opportunity: 1760 },
+  { skill: 'Managing Performance', neededForGoals: 518, exhibited: 790, opportunity: 450 },
+  { skill: 'Accountability', neededForGoals: 372, exhibited: 1197, opportunity: 652 },
+  { skill: 'Digital Fluency', neededForGoals: 347, exhibited: 650, opportunity: 519 },
+  { skill: 'Influencing Skills', neededForGoals: 285, exhibited: 168, opportunity: 553 },
+  { skill: 'Developing Others', neededForGoals: 277, exhibited: 531, opportunity: 402 },
+  { skill: 'Decision Making', neededForGoals: 223, exhibited: 761, opportunity: 153 },
+  { skill: 'Emotional Intelligence', neededForGoals: 79, exhibited: 486, opportunity: 372 },
+  { skill: 'Servant Leadership', neededForGoals: 26, exhibited: 209, opportunity: 135 },
+];
+
+// Goal engagement by BU
+export const goalEngagementBu = [
+  { bu: 'Airport Customer Service', users: 927, withGoals: 228, goalPct: 24.6, avgSessions: 1.4 },
+  { bu: 'Information Technology', users: 672, withGoals: 121, goalPct: 18.0, avgSessions: 1.4 },
+  { bu: 'TechOps', users: 644, withGoals: 185, goalPct: 28.7, avgSessions: 1.4 },
+  { bu: 'Global Sales', users: 470, withGoals: 135, goalPct: 28.7, avgSessions: 1.6 },
+  { bu: 'HR & Labor', users: 431, withGoals: 185, goalPct: 42.9, avgSessions: 1.4 },
+  { bu: 'Inflight Services', users: 406, withGoals: 169, goalPct: 41.6, avgSessions: 1.4 },
+  { bu: 'Reservations & Cust. Care', users: 242, withGoals: 101, goalPct: 41.7, avgSessions: 1.4 },
+  { bu: 'Revenue Management', users: 204, withGoals: 91, goalPct: 44.6, avgSessions: 1.3 },
+  { bu: 'GTH Information Technology', users: 204, withGoals: 20, goalPct: 9.8, avgSessions: 1.3 },
+  { bu: 'Finance', users: 161, withGoals: 65, goalPct: 40.4, avgSessions: 1.5 },
+  { bu: 'On-Board Services', users: 109, withGoals: 24, goalPct: 22.0, avgSessions: 1.5 },
+  { bu: 'Enterprise Digital Strategy', users: 81, withGoals: 17, goalPct: 21.0, avgSessions: 1.5 },
+  { bu: 'Flight Ops', users: 75, withGoals: 16, goalPct: 21.3, avgSessions: 1.4 },
+  { bu: 'Cargo', users: 74, withGoals: 20, goalPct: 27.0, avgSessions: 1.4 },
+];
+
+// Goal engagement by grade
+export const goalEngagementGrade = [
+  { grade: '10', users: 998, withGoals: 317, goalPct: 31.8, avgSessions: 1.5 },
+  { grade: '7', users: 809, withGoals: 298, goalPct: 36.8, avgSessions: 1.4 },
+  { grade: '7S', users: 771, withGoals: 184, goalPct: 23.9, avgSessions: 1.3 },
+  { grade: '6', users: 692, withGoals: 247, goalPct: 35.7, avgSessions: 1.5 },
+  { grade: '9', users: 635, withGoals: 204, goalPct: 32.1, avgSessions: 1.4 },
+  { grade: '8', users: 601, withGoals: 221, goalPct: 36.8, avgSessions: 1.5 },
+  { grade: '11', users: 426, withGoals: 125, goalPct: 29.3, avgSessions: 1.5 },
+  { grade: '5', users: 256, withGoals: 85, goalPct: 33.2, avgSessions: 1.4 },
+  { grade: '12', users: 169, withGoals: 44, goalPct: 26.0, avgSessions: 1.5 },
+  { grade: '13', users: 80, withGoals: 15, goalPct: 18.8, avgSessions: 1.5 },
+  { grade: '9S', users: 77, withGoals: 16, goalPct: 20.8, avgSessions: 1.7 },
+  { grade: '4', users: 72, withGoals: 27, goalPct: 37.5, avgSessions: 1.4 },
+  { grade: '14', users: 24, withGoals: 2, goalPct: 8.3, avgSessions: 1.0 },
+];
+
+// Goal barriers by grade band
+export const barriersByGradeBand = [
+  { band: 'Entry (4-5)', barriers: [{ name: 'Knowledge/Skill', count: 9 }, { name: 'Collaboration', count: 6 }, { name: 'Org Structure', count: 6 }, { name: 'Resource/Capacity', count: 3 }] },
+  { band: 'Mid (6-7)', barriers: [{ name: 'Resource/Capacity', count: 59 }, { name: 'Org Structure', count: 45 }, { name: 'Knowledge/Skill', count: 36 }, { name: 'Collaboration', count: 28 }] },
+  { band: 'Senior (8-10)', barriers: [{ name: 'Org Structure', count: 66 }, { name: 'Resource/Capacity', count: 58 }, { name: 'Knowledge/Skill', count: 43 }, { name: 'Collaboration', count: 39 }] },
+  { band: 'Leadership (11-13)', barriers: [{ name: 'Org Structure', count: 20 }, { name: 'Collaboration', count: 14 }, { name: 'Knowledge/Skill', count: 10 }, { name: 'Resource/Capacity', count: 9 }] },
+];
+
+// Skills needed for goals by grade band
+export const skillsForGoalsByBand = [
+  { band: 'Entry (4-5)', skills: [{ name: 'Communication', count: 44 }, { name: 'Strategic Thinking', count: 33 }, { name: 'Accountability', count: 23 }, { name: 'Managing Performance', count: 19 }, { name: 'Developing Others', count: 19 }] },
+  { band: 'Mid (6-7)', skills: [{ name: 'Strategic Thinking', count: 238 }, { name: 'Managing Performance', count: 203 }, { name: 'Communication', count: 193 }, { name: 'Accountability', count: 154 }, { name: 'Digital Fluency', count: 120 }] },
+  { band: 'Senior (8-10)', skills: [{ name: 'Strategic Thinking', count: 298 }, { name: 'Managing Performance', count: 171 }, { name: 'Communication', count: 153 }, { name: 'Digital Fluency', count: 109 }, { name: 'Accountability', count: 107 }] },
+  { band: 'Leadership (11-13)', skills: [{ name: 'Strategic Thinking', count: 101 }, { name: 'Managing Performance', count: 50 }, { name: 'Influencing Skills', count: 26 }, { name: 'Communication', count: 25 }, { name: 'Digital Fluency', count: 18 }] },
 ];
 
 export const goalQuality = [
@@ -201,22 +273,23 @@ export const targetedCohorts = [
   { cohort: 'General Merit', total: 13095, nadia: 4993, rate: 38.1, avgConvos: 6.6 },
 ];
 
-export const monthlyActivity = [
-  { month: '2024-12', users: 50 },
-  { month: '2025-01', users: 7 },
-  { month: '2025-02', users: 65 },
-  { month: '2025-03', users: 16 },
-  { month: '2025-04', users: 5 },
-  { month: '2025-05', users: 13 },
-  { month: '2025-06', users: 183 },
-  { month: '2025-07', users: 540 },
-  { month: '2025-08', users: 110 },
-  { month: '2025-09', users: 136 },
-  { month: '2025-10', users: 83 },
-  { month: '2025-11', users: 190 },
-  { month: '2025-12', users: 1210 },
-  { month: '2026-01', users: 680 },
-  { month: '2026-02', users: 3082 },
+// Monthly timeline
+export const monthlyTimeline = [
+  { month: 'Dec 24', activeUsers: 6373, lastSeenThisMonth: 50 },
+  { month: 'Jan 25', activeUsers: 6323, lastSeenThisMonth: 7 },
+  { month: 'Feb 25', activeUsers: 6316, lastSeenThisMonth: 65 },
+  { month: 'Mar 25', activeUsers: 6251, lastSeenThisMonth: 16 },
+  { month: 'Apr 25', activeUsers: 6235, lastSeenThisMonth: 5 },
+  { month: 'May 25', activeUsers: 6230, lastSeenThisMonth: 13 },
+  { month: 'Jun 25', activeUsers: 6217, lastSeenThisMonth: 183 },
+  { month: 'Jul 25', activeUsers: 6034, lastSeenThisMonth: 540 },
+  { month: 'Aug 25', activeUsers: 5494, lastSeenThisMonth: 110 },
+  { month: 'Sep 25', activeUsers: 5384, lastSeenThisMonth: 136 },
+  { month: 'Oct 25', activeUsers: 5248, lastSeenThisMonth: 83 },
+  { month: 'Nov 25', activeUsers: 5165, lastSeenThisMonth: 190 },
+  { month: 'Dec 25', activeUsers: 4975, lastSeenThisMonth: 1210 },
+  { month: 'Jan 26', activeUsers: 3765, lastSeenThisMonth: 680 },
+  { month: 'Feb 26', activeUsers: 3085, lastSeenThisMonth: 3082 },
 ];
 
 export const activationFormula = [
