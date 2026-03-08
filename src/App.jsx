@@ -12,11 +12,13 @@ import {
 } from './data';
 import './App.css';
 
-const NAVY = '#003366';
-const RED = '#8B0000';
-const GREEN = '#2e7d32';
-const AMBER = '#f57c00';
-const COLORS = ['#003366', '#8B0000', '#2e7d32', '#f57c00', '#5c6bc0', '#00838f', '#6a1b9a', '#d84315'];
+// Valence brand colors
+const NAVY = '#003FDC';
+const RED = '#FF2891';
+const GREEN = '#0084F0';
+const AMBER = '#9A31AF';
+const DARK_BLUE = '#0009B4';
+const COLORS = ['#003FDC', '#FF2891', '#0084F0', '#9A31AF', '#0009B4', '#DF217E', '#C4C8F8', '#393939'];
 
 // ─── PAGES ──────────────────────────────────────────────
 
@@ -121,7 +123,7 @@ function Page4() {
       <div className="kpi-grid">
         <div className="kpi"><div className="kpi-value">41%</div><div className="kpi-label">Teams Connected</div><div className="kpi-sub">2,632 of 6,373</div></div>
         <div className="kpi"><div className="kpi-value">25%</div><div className="kpi-label">Calendar Connected</div><div className="kpi-sub">1,572 of 6,373</div></div>
-        <div className="kpi" style={{background: `linear-gradient(135deg, ${GREEN} 0%, #43a047 100%)`}}><div className="kpi-value">2.3x</div><div className="kpi-label">Engagement Multiplier</div><div className="kpi-sub">Both vs. Neither</div></div>
+        <div className="kpi" style={{background: 'linear-gradient(135deg, #0084F0 0%, #003FDC 100%)'}}><div className="kpi-value">2.3x</div><div className="kpi-label">Engagement Multiplier</div><div className="kpi-sub">Both vs. Neither</div></div>
       </div>
       <div className="narrative">
         Users who connect both Teams and Calendar average 12.2 conversations — 2.3x more than those with neither integration. Integration makes Nadia contextually relevant to daily work. Current integration rates (41% Teams, 25% Calendar) represent a significant untapped opportunity. Moving Calendar adoption from 25% to 40% would drive meaningful engagement uplift.
@@ -341,7 +343,7 @@ function Page12() {
       <div className="kpi-grid">
         <div className="kpi"><div className="kpi-value">1,373</div><div className="kpi-label">FLLs in Nadia</div><div className="kpi-sub">10.2 avg conversations</div></div>
         <div className="kpi"><div className="kpi-value">4,646</div><div className="kpi-label">Scale ICs in Nadia</div><div className="kpi-sub">7.4 avg conversations</div></div>
-        <div className="kpi" style={{background:`linear-gradient(135deg, ${RED} 0%, #c62828 100%)`}}><div className="kpi-value">61</div><div className="kpi-label">FLLs Using Connect</div><div className="kpi-sub">Only 4.4% of FLLs</div></div>
+        <div className="kpi" style={{background:'linear-gradient(135deg, #9A31AF 0%, #0009B4 100%)'}}><div className="kpi-value">61</div><div className="kpi-label">FLLs Using Connect</div><div className="kpi-sub">Only 4.4% of FLLs</div></div>
       </div>
       <h3 style={{marginTop:20}}>When Connect Works, It Works — 3.3x More Engagement</h3>
       <div className="chart-container">
