@@ -5,7 +5,7 @@ import {
   LabelList
 } from 'recharts';
 import {
-  kpis, integrationEffect, integrationImpact, buData,
+  kpis, integrationEffect, buData,
   gradeData, careerLevelData, fllData,
   skillsLandscape, skillsFilterBu, skillsFilterCareer, skillsFilterGrade,
   goalSkillsAnalysis, goalEngagementBu, goalEngagementGrade,
@@ -20,6 +20,22 @@ const PINK = '#FF2891';
 const BRIGHT_BLUE = '#0084F0';
 const PURPLE = '#9A31AF';
 const DARK_BLUE = '#0009B4';
+const LIGHT_GREEN = '#34A853';
+
+// Color-code helper for % Using Nadia cells (red → yellow → green)
+const getRateStyle = (rate) => {
+  const hue = Math.min(rate, 100) * 1.2; // 0=red, 60=yellow, 120=green
+  return {
+    background: `hsl(${hue}, 75%, 90%)`,
+    color: `hsl(${hue}, 70%, 28%)`,
+    fontWeight: 600,
+    borderRadius: 4,
+    padding: '2px 8px',
+    display: 'inline-block',
+    minWidth: 48,
+    textAlign: 'center',
+  };
+};
 
 // Custom label for bar charts
 const renderBarLabel = (props) => {
@@ -41,6 +57,12 @@ const renderPctLabel = (props) => {
 // ─── PAGE 1: Growth Timeline (combined with Exec Summary) ──
 
 function Page1() {
+  const totalRegistered = monthlyTimeline.reduce((s, m) => s + m.newRegistered, 0);
+  const totalActive = monthlyTimeline.reduce((s, m) => s + m.newUsers, 0);
+  const totalReturnMonths = monthlyTimeline.reduce((s, m) => s + m.returnUsers, 0);
+  const totalUserMonths = totalActive + totalReturnMonths;
+  const returnRate = Math.round(totalReturnMonths / totalUserMonths * 100 * 10) / 10;
+
   const chartData = monthlyTimeline.map(m => ({
     ...m,
     totalActive: m.newUsers + m.returnUsers,
@@ -50,15 +72,15 @@ function Page1() {
       <h1>Nadia at Delta: AI coaching adoption overview</h1>
       <h2>Growth Timeline — March 2026</h2>
       <div className="kpi-grid">
-        <div className="kpi"><div className="kpi-value">14,602</div><div className="kpi-label">Total Registered Users</div></div>
-        <div className="kpi"><div className="kpi-value">6,373</div><div className="kpi-label">Total Active Nadia Users</div><div className="kpi-sub">43.6% adoption</div></div>
-        <div className="kpi"><div className="kpi-value">51.5%</div><div className="kpi-label">Return Rate</div><div className="kpi-sub">3,284 users with 3+ conversations</div></div>
+        <div className="kpi"><div className="kpi-value">{totalRegistered.toLocaleString()}</div><div className="kpi-label">Total Registered Users</div></div>
+        <div className="kpi"><div className="kpi-value">{totalActive.toLocaleString()}</div><div className="kpi-label">Total Active Nadia Users</div><div className="kpi-sub">{Math.round(totalActive / 14602 * 1000) / 10}% of merit population</div></div>
+        <div className="kpi"><div className="kpi-value">{returnRate}%</div><div className="kpi-label">Return Rate</div><div className="kpi-sub">Share of monthly sessions from returning users</div></div>
         <div className="kpi"><div className="kpi-value">50,218</div><div className="kpi-label">Total Coaching Conversations</div></div>
         <div className="kpi" style={{background:'linear-gradient(135deg, #0084F0, #003FDC)', gridColumn: 'span 2'}}><div className="kpi-value">7.9</div><div className="kpi-label">Average Conversations per Active User</div></div>
       </div>
       <div className="chart-container" style={{ marginTop: 16 }}>
         <h3 style={{ marginBottom: 8 }}>Monthly Active Users — New vs. Returning</h3>
-        <ResponsiveContainer width="100%" height={420}>
+        <ResponsiveContainer width="100%" height={340}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" tick={{ fontSize: 10 }} />
@@ -76,8 +98,26 @@ function Page1() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <div className="chart-container" style={{ marginTop: 16 }}>
+        <h3 style={{ marginBottom: 8 }}>New Registrations per Month</h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+            <YAxis label={{ value: 'Registrations', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#393939' } }} />
+            <Tooltip />
+            <Bar dataKey="newRegistered" fill={LIGHT_GREEN} name="New Registrations" radius={[4,4,0,0]}>
+              <LabelList dataKey="newRegistered" content={(props) => {
+                const { x, y, width, value } = props;
+                if (!value || value < 30) return null;
+                return <text x={x + width / 2} y={y - 6} fill="#393939" fontSize={9} fontWeight={500} textAnchor="middle">{value.toLocaleString()}</text>;
+              }} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       <div className="narrative">
-        Nadia's growth follows Delta's talent calendar. The largest activation events were the year-end performance review cycle (December 2025 — 3,200 active users) and the annual goal-setting process (February 2026 — 4,500 active users). Embedding Nadia into formal talent processes is the most effective adoption driver. The strategic question is: how do we sustain engagement between these formal cycles?
+        Nadia's growth follows Delta's talent calendar. The largest activation events were the year-end performance review cycle (December 2025 — 3,142 active users) and the annual goal-setting process (February 2026 — 3,143 active users). Embedding Nadia into formal talent processes is the most effective adoption driver. The strategic question is: how do we sustain engagement between these formal cycles?
       </div>
       <div className="callout">
         <strong>Key milestone:</strong> Return users outnumber new users 2:1 in the most recent months, indicating growing stickiness. The Dec 2025 - Feb 2026 window saw the highest sustained activity, coinciding with year-end reviews and goal-setting.
@@ -91,16 +131,22 @@ function Page1() {
 function Page2() {
   return (<>
     <div className="card">
-      <h1>Connecting Teams and Calendar doubles engagement</h1>
+      <h1>Connecting Teams and Calendar increases engagement</h1>
       <h2>The Integration Effect</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 16 }}>When employees connect their Microsoft Teams and Calendar to Nadia, their coaching engagement increases dramatically. This is the single highest-leverage intervention for driving deeper, more sustained coaching across the organization.</p>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 16 }}>Employees who connect their Microsoft Teams and Calendar to Nadia tend to have more coaching conversations. This is a strong lever we see consistently driving more usage across the organization.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={320}>
-          <BarChart data={integrationEffect} layout="vertical" margin={{ left: 10, right: 80 }}>
+          <BarChart data={integrationEffect} layout="vertical" margin={{ left: 10, right: 80, top: 10, bottom: 30 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" label={{ value: 'Average Coaching Conversations per User', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} tick={{ fontSize: 10 }} />
+            <XAxis type="number" label={{ value: 'Average Coaching Conversations per User', position: 'bottom', offset: 0, style: { fontSize: 11 } }} tick={{ fontSize: 10 }} />
             <YAxis type="category" dataKey="label" width={180} tick={{ fontSize: 12 }} />
-            <Tooltip formatter={(value) => [`${value} conversations`, 'Average']} />
+            <Tooltip content={({ payload }) => {
+              if (!payload || !payload.length) return null;
+              const d = payload[0].payload;
+              return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
+                <strong>{d.label}</strong><br/>{d.avgConvos} avg conversations<br/>{d.users.toLocaleString()} total users
+              </div>);
+            }} />
             <Bar dataKey="avgConvos" fill={BLUE} radius={[0,4,4,0]}>
               <LabelList dataKey="avgConvos" content={(props) => {
                 const { x, y, width, value } = props;
@@ -118,45 +164,7 @@ function Page2() {
         </div>
       </div>
       <div className="narrative">
-        Users who connect both Teams and Calendar average <strong>12.2 coaching conversations</strong> — more than double the 5.3 conversations from users with no integrations. Even connecting Teams alone lifts engagement to 9.5 conversations, an 80% increase. With 3,572 users (56%) currently without any integration, this is the largest untapped engagement opportunity.
-      </div>
-    </div>
-    <div className="card">
-      <h2>Integration Engagement Multipliers</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 20 }}>Each integration creates a measurable lift in coaching depth. The chart below shows the before-and-after impact of connecting each integration.</p>
-      {integrationImpact.map((r, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, padding: '16px 20px', background: '#f8f8f8', borderRadius: 12 }}>
-          <div style={{ flex: '0 0 160px' }}>
-            <div style={{ fontSize: 14, fontWeight: 500, color: '#393939' }}>{r.factor}</div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 11, color: '#9A9A9A', marginBottom: 4 }}>Not Connected</div>
-              <div style={{ background: '#DFDFDF', borderRadius: 8, padding: '8px 16px' }}>
-                <div style={{ fontSize: 20, fontWeight: 300, fontFamily: 'var(--font-accent)' }}>{r.withoutAvg}</div>
-                <div style={{ fontSize: 10, color: '#9A9A9A' }}>{r.withoutUsers.toLocaleString()} users</div>
-              </div>
-            </div>
-            <div style={{ fontSize: 24, color: PINK, fontWeight: 500 }}>→</div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 11, color: '#9A9A9A', marginBottom: 4 }}>Connected</div>
-              <div style={{ background: '#E8E9FD', borderRadius: 8, padding: '8px 16px', border: `2px solid ${BLUE}` }}>
-                <div style={{ fontSize: 20, fontWeight: 300, fontFamily: 'var(--font-accent)', color: BLUE }}>{r.withAvg}</div>
-                <div style={{ fontSize: 10, color: '#9A9A9A' }}>{r.withUsers.toLocaleString()} users</div>
-              </div>
-            </div>
-            <div style={{ textAlign: 'center', marginLeft: 8 }}>
-              <div style={{ fontSize: 28, fontWeight: 300, fontFamily: 'var(--font-accent)', color: PINK }}>{r.multiplier}</div>
-              <div style={{ fontSize: 10, color: '#9A9A9A' }}>multiplier</div>
-            </div>
-          </div>
-        </div>
-      ))}
-      <div className="narrative">
-        Across all three integration dimensions, the engagement multiplier is remarkably consistent: <strong>Teams drives a 1.9x lift</strong> (11.0 vs. 5.7 average conversations), <strong>Calendar delivers the same 1.9x lift</strong> (12.3 vs. 6.4), and <strong>both integrations together yield a 1.8x multiplier</strong> (12.2 vs. 6.7). Every percentage point increase in integration adoption directly translates to deeper coaching engagement and more sustained behavior change.
-      </div>
-      <div className="callout callout-green">
-        <strong>The bottom line:</strong> Integration is the primary driver of coaching depth. Connecting Teams and Calendar for the 3,572 users currently without integrations could generate an estimated 15,000+ additional coaching conversations based on observed multipliers.
+        Users who connect both Teams and Calendar average <strong>12.2 coaching conversations</strong>, compared to 5.3 for users with no integrations. Even connecting Teams alone lifts engagement to 9.5 conversations. With 3,572 users (56%) currently without any integration, encouraging adoption of these integrations represents a meaningful opportunity to deepen coaching engagement.
       </div>
     </div>
   </>);
@@ -165,9 +173,35 @@ function Page2() {
 // ─── PAGE 3: BU Adoption & Adoption Matrix ───────────────
 
 function Page3() {
-  const bubbleData = buData.filter(b => b.pop >= 150).map(b => ({
-    x: b.rate, y: b.avgConvos, z: b.nadia, fullName: b.bu,
-  }));
+  const ADOPTION_MID = 43; // median adoption rate
+  const CONVOS_MID = 7.9;  // org avg convos
+
+  const bubbleData = buData.filter(b => b.pop >= 150).map(b => {
+    let bucket, bucketColor, rec;
+    if (b.rate >= ADOPTION_MID && b.avgConvos >= CONVOS_MID) {
+      bucket = 'Champions'; bucketColor = '#34A853';
+      rec = 'Scale what works — use these BUs as internal case studies and peer advocates.';
+    } else if (b.rate < ADOPTION_MID && b.avgConvos >= CONVOS_MID) {
+      bucket = 'Power Users, Low Reach'; bucketColor = '#F09D00';
+      rec = 'Leverage super users as ambassadors to drive broader awareness and adoption.';
+    } else if (b.rate >= ADOPTION_MID && b.avgConvos < CONVOS_MID) {
+      bucket = 'Broad Adoption, Light Use'; bucketColor = '#0084F0';
+      rec = 'Deepen engagement through integration nudges and goal-setting prompts.';
+    } else {
+      bucket = 'Needs Activation'; bucketColor = '#E53935';
+      rec = 'Targeted onboarding campaigns and leadership sponsorship to spark initial adoption.';
+    }
+    return { x: b.rate, y: b.avgConvos, z: b.nadia, fullName: b.bu, bucket, bucketColor, rec };
+  });
+
+  const buckets = ['Champions', 'Power Users, Low Reach', 'Broad Adoption, Light Use', 'Needs Activation'];
+  const bucketMeta = {
+    'Champions': { color: '#34A853', icon: '★', bg: '#E6F4EA' },
+    'Power Users, Low Reach': { color: '#F09D00', icon: '⚡', bg: '#FEF3E0' },
+    'Broad Adoption, Light Use': { color: '#0084F0', icon: '↗', bg: '#E3F2FD' },
+    'Needs Activation': { color: '#E53935', icon: '◎', bg: '#FDECEA' },
+  };
+
   return (<>
     <div className="card">
       <h1>Adoption varies widely by business unit</h1>
@@ -176,17 +210,17 @@ function Page3() {
         <thead><tr><th>Business Unit</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th></tr></thead>
         <tbody>
           {buData.map((r, i) => (
-            <tr key={i} className={r.rate >= 60 ? 'highlight' : r.rate < 25 ? 'danger' : ''}>
+            <tr key={i}>
               <td>{r.bu}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
-              <td><strong>{r.rate}%</strong></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
     <div className="card">
-      <h2>BU Adoption Adoption Matrix</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size represents number of Nadia users. Hover over each bubble for details.</p>
+      <h2>BU Adoption Matrix</h2>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Quadrants based on org-wide medians: {ADOPTION_MID}% adoption rate, {CONVOS_MID} avg conversations. Bubble size = number of Nadia users.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={480}>
           <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
@@ -198,25 +232,28 @@ function Page3() {
               if (!payload || !payload.length) return null;
               const d = payload[0].payload;
               return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
-                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}
+                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}<br/><span style={{ color: d.bucketColor, fontWeight: 500 }}>{d.bucket}</span>
               </div>);
             }} />
-            <Scatter data={bubbleData} fill={BLUE} fillOpacity={0.7} />
+            {buckets.map(bk => (
+              <Scatter key={bk} data={bubbleData.filter(b => b.bucket === bk)} fill={bucketMeta[bk].color} fillOpacity={0.75} name={bk} />
+            ))}
           </ScatterChart>
         </ResponsiveContainer>
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-        {bubbleData.map((b, i) => (
-          <div key={i} style={{ fontSize: 10, background: '#E8E9FD', borderRadius: 6, padding: '4px 8px' }}>
-            <strong>{b.fullName}</strong>: {b.x}% adoption, {b.y} avg convos
-          </div>
-        ))}
-      </div>
-      <div className="callout callout-green" style={{ marginTop: 12 }}>
-        <strong>Stars:</strong> HR & Labor (83% adoption, 11.2 avg convos), Reservations & Cust. Care (67%, 20.1), and DLV Operations (15%, but 25.8 avg convos — small but deeply engaged).
-      </div>
-      <div className="callout callout-red">
-        <strong>Opportunity:</strong> TechOps (2,331 employees, 31% adoption, 5.5 avg convos) and IT (2,099 employees, 34%, 4.5 avg convos) are the two largest BUs with below-average adoption and engagement depth.
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
+        {buckets.map(bk => {
+          const items = bubbleData.filter(b => b.bucket === bk);
+          if (!items.length) return null;
+          const meta = bucketMeta[bk];
+          return (
+            <div key={bk} style={{ background: meta.bg, borderRadius: 10, padding: '12px 16px', borderLeft: `4px solid ${meta.color}` }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: meta.color, marginBottom: 6 }}>{meta.icon} {bk}</div>
+              <div style={{ fontSize: 12, color: '#393939', marginBottom: 6 }}>{items.map(i => i.fullName).join(', ')}</div>
+              <div style={{ fontSize: 11, color: '#666', fontStyle: 'italic' }}>{items[0].rec}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   </>);
@@ -225,10 +262,23 @@ function Page3() {
 // ─── PAGE 4: Grade Level Adoption & Adoption Matrix ──────
 
 function Page4() {
-  const gradeChart = gradeData.map(g => ({ ...g, name: `Grade ${g.grade}` }));
-  const gradeBubble = gradeData.filter(g => g.pop >= 100).map(g => ({
-    x: g.rate, y: g.avgConvos, z: g.nadia, fullName: `Grade ${g.grade}`,
-  }));
+  const ADOPTION_MID = 43;
+  const CONVOS_MID = 7.9;
+  const gradeBubble = gradeData.filter(g => g.pop >= 100).map(g => {
+    let bucket, bucketColor;
+    if (g.rate >= ADOPTION_MID && g.avgConvos >= CONVOS_MID) { bucket = 'Champions'; bucketColor = '#34A853'; }
+    else if (g.rate < ADOPTION_MID && g.avgConvos >= CONVOS_MID) { bucket = 'Power Users, Low Reach'; bucketColor = '#F09D00'; }
+    else if (g.rate >= ADOPTION_MID && g.avgConvos < CONVOS_MID) { bucket = 'Broad Adoption, Light Use'; bucketColor = '#0084F0'; }
+    else { bucket = 'Needs Activation'; bucketColor = '#E53935'; }
+    return { x: g.rate, y: g.avgConvos, z: g.nadia, fullName: `Grade ${g.grade}`, bucket, bucketColor };
+  });
+  const bucketNames = ['Champions', 'Power Users, Low Reach', 'Broad Adoption, Light Use', 'Needs Activation'];
+  const bucketMeta = {
+    'Champions': { color: '#34A853', bg: '#E6F4EA' },
+    'Power Users, Low Reach': { color: '#F09D00', bg: '#FEF3E0' },
+    'Broad Adoption, Light Use': { color: '#0084F0', bg: '#E3F2FD' },
+    'Needs Activation': { color: '#E53935', bg: '#FDECEA' },
+  };
   return (<>
     <div className="card">
       <h1>Adoption rate increases with seniority</h1>
@@ -237,9 +287,9 @@ function Page4() {
         <thead><tr><th>Grade</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th></tr></thead>
         <tbody>
           {gradeData.map((r, i) => (
-            <tr key={i} className={r.rate >= 55 ? 'highlight' : r.rate < 30 ? 'danger' : ''}>
+            <tr key={i}>
               <td>{r.grade}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
-              <td><strong>{r.rate}%</strong></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
             </tr>
           ))}
         </tbody>
@@ -247,7 +297,7 @@ function Page4() {
     </div>
     <div className="card">
       <h2>Grade Level Adoption Matrix</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size represents number of Nadia users. Hover over each bubble for details.</p>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size = Nadia users. Color = quadrant bucket. Hover for details.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={420}>
           <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
@@ -259,19 +309,14 @@ function Page4() {
               if (!payload || !payload.length) return null;
               const d = payload[0].payload;
               return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
-                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}
+                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}<br/><span style={{ color: d.bucketColor, fontWeight: 500 }}>{d.bucket}</span>
               </div>);
             }} />
-            <Scatter data={gradeBubble} fill={PINK} fillOpacity={0.7} />
+            {bucketNames.map(bk => (
+              <Scatter key={bk} data={gradeBubble.filter(b => b.bucket === bk)} fill={bucketMeta[bk].color} fillOpacity={0.75} name={bk} />
+            ))}
           </ScatterChart>
         </ResponsiveContainer>
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-        {gradeBubble.map((b, i) => (
-          <div key={i} style={{ fontSize: 10, background: '#E8E9FD', borderRadius: 6, padding: '4px 8px' }}>
-            <strong>{b.fullName}</strong>: {b.x}% adoption, {b.y} avg convos
-          </div>
-        ))}
       </div>
       <div className="callout">
         <strong>Pattern:</strong> Grade 7S (frontline leaders) leads adoption at 60.6% with 11.5 avg convos, followed by Grade 11 (54.5%) and Grade 10 (53.4%). Entry-level grades (4-5) and very senior grades (14+) show the lowest adoption — likely different intervention strategies are needed for each end.
@@ -283,10 +328,24 @@ function Page4() {
 // ─── PAGE 5: Career Level Adoption & Adoption Matrix ─────
 
 function Page5() {
+  const ADOPTION_MID = 43;
+  const CONVOS_MID = 7.9;
   const sorted = [...careerLevelData].sort((a, b) => b.rate - a.rate);
-  const careerBubble = careerLevelData.filter(c => c.pop >= 50).map(c => ({
-    x: c.rate, y: c.avgConvos, z: c.nadia, fullName: c.level,
-  }));
+  const careerBubble = careerLevelData.filter(c => c.pop >= 50).map(c => {
+    let bucket, bucketColor;
+    if (c.rate >= ADOPTION_MID && c.avgConvos >= CONVOS_MID) { bucket = 'Champions'; bucketColor = '#34A853'; }
+    else if (c.rate < ADOPTION_MID && c.avgConvos >= CONVOS_MID) { bucket = 'Power Users, Low Reach'; bucketColor = '#F09D00'; }
+    else if (c.rate >= ADOPTION_MID && c.avgConvos < CONVOS_MID) { bucket = 'Broad Adoption, Light Use'; bucketColor = '#0084F0'; }
+    else { bucket = 'Needs Activation'; bucketColor = '#E53935'; }
+    return { x: c.rate, y: c.avgConvos, z: c.nadia, fullName: c.level, bucket, bucketColor };
+  });
+  const bucketNames = ['Champions', 'Power Users, Low Reach', 'Broad Adoption, Light Use', 'Needs Activation'];
+  const bucketMeta = {
+    'Champions': { color: '#34A853', bg: '#E6F4EA' },
+    'Power Users, Low Reach': { color: '#F09D00', bg: '#FEF3E0' },
+    'Broad Adoption, Light Use': { color: '#0084F0', bg: '#E3F2FD' },
+    'Needs Activation': { color: '#E53935', bg: '#FDECEA' },
+  };
   return (<>
     <div className="card">
       <h1>Frontline leaders and senior managers lead adoption</h1>
@@ -295,9 +354,9 @@ function Page5() {
         <thead><tr><th>Career Level</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th></tr></thead>
         <tbody>
           {sorted.map((r, i) => (
-            <tr key={i} className={r.rate >= 55 ? 'highlight' : r.rate < 35 ? 'danger' : ''}>
+            <tr key={i}>
               <td>{r.level}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
-              <td><strong>{r.rate}%</strong></td><td>{r.avgConvos}</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td>
             </tr>
           ))}
         </tbody>
@@ -305,7 +364,7 @@ function Page5() {
     </div>
     <div className="card">
       <h2>Career Level Adoption Matrix</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size represents number of Nadia users. Hover over each bubble for details.</p>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size = Nadia users. Color = quadrant bucket. Hover for details.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={420}>
           <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
@@ -317,19 +376,14 @@ function Page5() {
               if (!payload || !payload.length) return null;
               const d = payload[0].payload;
               return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
-                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}
+                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}<br/><span style={{ color: d.bucketColor, fontWeight: 500 }}>{d.bucket}</span>
               </div>);
             }} />
-            <Scatter data={careerBubble} fill={PURPLE} fillOpacity={0.7} />
+            {bucketNames.map(bk => (
+              <Scatter key={bk} data={careerBubble.filter(b => b.bucket === bk)} fill={bucketMeta[bk].color} fillOpacity={0.75} name={bk} />
+            ))}
           </ScatterChart>
         </ResponsiveContainer>
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-        {careerBubble.map((b, i) => (
-          <div key={i} style={{ fontSize: 10, background: '#E8E9FD', borderRadius: 6, padding: '4px 8px' }}>
-            <strong>{b.fullName}</strong>: {b.x}% adoption, {b.y} avg convos
-          </div>
-        ))}
       </div>
       <div className="narrative">
         Frontline Leaders (61.1% adoption, 11.5 avg convos) and Sr. Managers (58.5%, 11.8) sit in the top-right quadrant — high adoption AND deep engagement. Individual contributors (Specialists at 38.2%, Analysts at 31.1%) show lower adoption but still meaningful engagement when they do adopt. The VP and Sr. VP levels have the lowest adoption, likely reflecting different coaching needs at the executive tier.
@@ -362,7 +416,7 @@ function Page9() {
           {fllData.fllByBu.map((r, i) => (
             <tr key={i}>
               <td>{r.bu}</td><td>{r.total}</td><td>{r.nadia}</td>
-              <td><strong>{r.rate}%</strong></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td><td>{r.connectUsers || '—'}</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td><td>{r.connectUsers || '—'}</td>
             </tr>
           ))}
         </tbody>

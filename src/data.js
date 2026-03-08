@@ -212,24 +212,24 @@ export const targetedCohorts = [
   { cohort: 'General Merit', total: 13095, nadia: 4993, rate: 38.1, avgConvos: 6.6 },
 ];
 
-// Monthly timeline — estimated monthly active users and conversations
-// Note: active users estimated from last_active_date cohorts; conversations distributed proportionally
+// Monthly timeline — from Metabase query (actual data)
 export const monthlyTimeline = [
-  { month: 'Dec 24', newUsers: 280, returnUsers: 20, conversations: 400 },
-  { month: 'Jan 25', newUsers: 40, returnUsers: 110, conversations: 200 },
-  { month: 'Feb 25', newUsers: 180, returnUsers: 170, conversations: 450 },
-  { month: 'Mar 25', newUsers: 80, returnUsers: 120, conversations: 300 },
-  { month: 'Apr 25', newUsers: 40, returnUsers: 110, conversations: 250 },
-  { month: 'May 25', newUsers: 60, returnUsers: 120, conversations: 300 },
-  { month: 'Jun 25', newUsers: 350, returnUsers: 250, conversations: 1200 },
-  { month: 'Jul 25', newUsers: 650, returnUsers: 550, conversations: 2800 },
-  { month: 'Aug 25', newUsers: 80, returnUsers: 420, conversations: 1500 },
-  { month: 'Sep 25', newUsers: 80, returnUsers: 460, conversations: 1600 },
-  { month: 'Oct 25', newUsers: 40, returnUsers: 360, conversations: 1200 },
-  { month: 'Nov 25', newUsers: 80, returnUsers: 520, conversations: 2000 },
-  { month: 'Dec 25', newUsers: 1600, returnUsers: 1600, conversations: 12018 },
-  { month: 'Jan 26', newUsers: 350, returnUsers: 1750, conversations: 8500 },
-  { month: 'Feb 26', newUsers: 1400, returnUsers: 3100, conversations: 17500 },
+  { month: 'Dec 24', newUsers: 258, returnUsers: 9, newRegistered: 281 },
+  { month: 'Jan 25', newUsers: 12, returnUsers: 91, newRegistered: 35 },
+  { month: 'Feb 25', newUsers: 294, returnUsers: 120, newRegistered: 421 },
+  { month: 'Mar 25', newUsers: 38, returnUsers: 164, newRegistered: 38 },
+  { month: 'Apr 25', newUsers: 14, returnUsers: 112, newRegistered: 18 },
+  { month: 'May 25', newUsers: 103, returnUsers: 123, newRegistered: 317 },
+  { month: 'Jun 25', newUsers: 727, returnUsers: 235, newRegistered: 1377 },
+  { month: 'Jul 25', newUsers: 1460, returnUsers: 630, newRegistered: 2176 },
+  { month: 'Aug 25', newUsers: 187, returnUsers: 655, newRegistered: 274 },
+  { month: 'Sep 25', newUsers: 282, returnUsers: 597, newRegistered: 466 },
+  { month: 'Oct 25', newUsers: 146, returnUsers: 595, newRegistered: 137 },
+  { month: 'Nov 25', newUsers: 272, returnUsers: 729, newRegistered: 242 },
+  { month: 'Dec 25', newUsers: 1378, returnUsers: 1764, newRegistered: 1271 },
+  { month: 'Jan 26', newUsers: 390, returnUsers: 1473, newRegistered: 456 },
+  { month: 'Feb 26', newUsers: 816, returnUsers: 2327, newRegistered: 630 },
+  { month: 'Mar 26', newUsers: 50, returnUsers: 778, newRegistered: 45 },
 ];
 
 export const activationFormula = [
