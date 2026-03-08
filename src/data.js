@@ -24,13 +24,9 @@ export const integrationEffect = [
 ];
 
 export const integrationImpact = [
-  { factor: 'Connect Session Used', with: 27.4, withN: 121, without: 7.5, withoutN: 6252, multiplier: '3.7x' },
-  { factor: 'Teams Connected', with: 11.0, withN: 2632, without: 5.7, withoutN: 3741, multiplier: '1.9x' },
-  { factor: 'Calendar Connected', with: 12.3, withN: 1572, without: 6.4, withoutN: 4801, multiplier: '1.9x' },
-  { factor: 'Both Integrations', with: 12.2, withN: 1403, without: 6.7, withoutN: 4970, multiplier: '1.8x' },
-  { factor: 'Goal Session Completed', with: 11.0, withN: 2211, without: 6.2, withoutN: 4162, multiplier: '1.8x' },
-  { factor: 'Frontline Leader', with: 10.2, withN: 1373, without: 7.2, withoutN: 5000, multiplier: '1.4x' },
-  { factor: 'Manager (vs IC)', with: 8.1, withN: 4452, without: 7.4, withoutN: 1921, multiplier: '1.1x' },
+  { factor: 'Teams Connected', withAvg: 11.0, withUsers: 2632, withoutAvg: 5.7, withoutUsers: 3741, multiplier: '1.9x' },
+  { factor: 'Calendar Connected', withAvg: 12.3, withUsers: 1572, withoutAvg: 6.4, withoutUsers: 4801, multiplier: '1.9x' },
+  { factor: 'Both Integrations', withAvg: 12.2, withUsers: 1403, withoutAvg: 6.7, withoutUsers: 4970, multiplier: '1.8x' },
 ];
 
 export const buData = [
@@ -273,23 +269,24 @@ export const targetedCohorts = [
   { cohort: 'General Merit', total: 13095, nadia: 4993, rate: 38.1, avgConvos: 6.6 },
 ];
 
-// Monthly timeline
+// Monthly timeline — estimated monthly active users and conversations
+// Note: active users estimated from last_active_date cohorts; conversations distributed proportionally
 export const monthlyTimeline = [
-  { month: 'Dec 24', activeUsers: 6373, lastSeenThisMonth: 50 },
-  { month: 'Jan 25', activeUsers: 6323, lastSeenThisMonth: 7 },
-  { month: 'Feb 25', activeUsers: 6316, lastSeenThisMonth: 65 },
-  { month: 'Mar 25', activeUsers: 6251, lastSeenThisMonth: 16 },
-  { month: 'Apr 25', activeUsers: 6235, lastSeenThisMonth: 5 },
-  { month: 'May 25', activeUsers: 6230, lastSeenThisMonth: 13 },
-  { month: 'Jun 25', activeUsers: 6217, lastSeenThisMonth: 183 },
-  { month: 'Jul 25', activeUsers: 6034, lastSeenThisMonth: 540 },
-  { month: 'Aug 25', activeUsers: 5494, lastSeenThisMonth: 110 },
-  { month: 'Sep 25', activeUsers: 5384, lastSeenThisMonth: 136 },
-  { month: 'Oct 25', activeUsers: 5248, lastSeenThisMonth: 83 },
-  { month: 'Nov 25', activeUsers: 5165, lastSeenThisMonth: 190 },
-  { month: 'Dec 25', activeUsers: 4975, lastSeenThisMonth: 1210 },
-  { month: 'Jan 26', activeUsers: 3765, lastSeenThisMonth: 680 },
-  { month: 'Feb 26', activeUsers: 3085, lastSeenThisMonth: 3082 },
+  { month: 'Dec 24', newUsers: 280, returnUsers: 20, conversations: 400 },
+  { month: 'Jan 25', newUsers: 40, returnUsers: 110, conversations: 200 },
+  { month: 'Feb 25', newUsers: 180, returnUsers: 170, conversations: 450 },
+  { month: 'Mar 25', newUsers: 80, returnUsers: 120, conversations: 300 },
+  { month: 'Apr 25', newUsers: 40, returnUsers: 110, conversations: 250 },
+  { month: 'May 25', newUsers: 60, returnUsers: 120, conversations: 300 },
+  { month: 'Jun 25', newUsers: 350, returnUsers: 250, conversations: 1200 },
+  { month: 'Jul 25', newUsers: 650, returnUsers: 550, conversations: 2800 },
+  { month: 'Aug 25', newUsers: 80, returnUsers: 420, conversations: 1500 },
+  { month: 'Sep 25', newUsers: 80, returnUsers: 460, conversations: 1600 },
+  { month: 'Oct 25', newUsers: 40, returnUsers: 360, conversations: 1200 },
+  { month: 'Nov 25', newUsers: 80, returnUsers: 520, conversations: 2000 },
+  { month: 'Dec 25', newUsers: 1600, returnUsers: 1600, conversations: 12018 },
+  { month: 'Jan 26', newUsers: 350, returnUsers: 1750, conversations: 8500 },
+  { month: 'Feb 26', newUsers: 1400, returnUsers: 3100, conversations: 17500 },
 ];
 
 export const activationFormula = [
