@@ -962,22 +962,16 @@ function Page18() {
 
 // ─── Pages array ────────────────────────────────────────
 
-const pages = [Page1, Page3, Page4, Page5, Page9, Page10, Page12, Page13, Page18];
+const pages = [Page1, Page3, Page4, Page5, Page9];
 const pageNames = [
   'Engagement Overview',
   'BU Adoption', 'Grade Level Adoption', 'Career Level Adoption',
   'Frontline Leaders',
-  'Skills Landscape',
-  'Goal Engagement', 'Goal Barriers & Skills',
-  'Recommendations'
 ];
 
 const navSections = [
   { label: 'Engagement', pages: [0] },
   { label: 'Adoption', pages: [1, 2, 3, 4] },
-  { label: 'Goals', pages: [6, 7] },
-  { label: 'Skills', pages: [5] },
-  { label: 'Strategy', pages: [8] },
 ];
 
 // ─── APP ────────────────────────────────────────────────
@@ -1028,11 +1022,6 @@ function App() {
         ))}
       </aside>
       <main className="main">
-        <div className="page-nav">
-          <button disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button>
-          <span className="page-counter">{page + 1} / {pages.length}</span>
-          <button disabled={page === pages.length - 1} onClick={() => setPage(page + 1)}>Next</button>
-        </div>
         <PageComponent />
       </main>
     </div>
