@@ -57,12 +57,6 @@ const renderPctLabel = (props) => {
 // ─── PAGE 1: Growth Timeline (combined with Exec Summary) ──
 
 function Page1() {
-  const totalRegistered = monthlyTimeline.reduce((s, m) => s + m.newRegistered, 0);
-  const totalActive = monthlyTimeline.reduce((s, m) => s + m.newUsers, 0);
-  const totalReturnMonths = monthlyTimeline.reduce((s, m) => s + m.returnUsers, 0);
-  const totalUserMonths = totalActive + totalReturnMonths;
-  const returnRate = Math.round(totalReturnMonths / totalUserMonths * 100 * 10) / 10;
-
   const chartData = monthlyTimeline.map(m => ({
     ...m,
     totalActive: m.newUsers + m.returnUsers,
@@ -72,10 +66,10 @@ function Page1() {
       <h1>Nadia at Delta: AI coaching adoption overview</h1>
       <h2>Growth Timeline — March 2026</h2>
       <div className="kpi-grid">
-        <div className="kpi"><div className="kpi-value">{totalRegistered.toLocaleString()}</div><div className="kpi-label">Total Registered Users</div></div>
-        <div className="kpi"><div className="kpi-value">{totalActive.toLocaleString()}</div><div className="kpi-label">Total Active Nadia Users</div><div className="kpi-sub">{Math.round(totalActive / 14602 * 1000) / 10}% of merit population</div></div>
-        <div className="kpi"><div className="kpi-value">{returnRate}%</div><div className="kpi-label">Return Rate</div><div className="kpi-sub">Share of monthly sessions from returning users</div></div>
-        <div className="kpi"><div className="kpi-value">50,218</div><div className="kpi-label">Total Coaching Conversations</div></div>
+        <div className="kpi"><div className="kpi-value">8,205</div><div className="kpi-label">Total Registered Users</div></div>
+        <div className="kpi"><div className="kpi-value">6,425</div><div className="kpi-label">Total Active Nadia Users</div><div className="kpi-sub">44.0% of merit population</div></div>
+        <div className="kpi"><div className="kpi-value">4,136</div><div className="kpi-label">Total Return Users</div><div className="kpi-sub">64.4% return rate</div></div>
+        <div className="kpi"><div className="kpi-value">51,479</div><div className="kpi-label">Total Coaching Conversations</div></div>
         <div className="kpi" style={{background:'linear-gradient(135deg, #0084F0, #003FDC)', gridColumn: 'span 2'}}><div className="kpi-value">7.9</div><div className="kpi-label">Average Conversations per Active User</div></div>
       </div>
       <div className="chart-container" style={{ marginTop: 16 }}>
