@@ -7,7 +7,7 @@ import {
 import {
   kpis, integrationEffect, integrationImpact, buData,
   gradeData, careerLevelData, fllData,
-  skillsLandscape, skillsFilterBu, skillsFilterGrade,
+  skillsLandscape, skillsFilterBu, skillsFilterCareer, skillsFilterGrade,
   goalSkillsAnalysis, goalEngagementBu, goalEngagementGrade,
   barriersByGradeBand, skillsForGoalsByBand,
   goalQuality, goalBarriersByBu, monthlyTimeline
@@ -41,6 +41,10 @@ const renderPctLabel = (props) => {
 // ─── PAGE 1: Growth Timeline (combined with Exec Summary) ──
 
 function Page1() {
+  const chartData = monthlyTimeline.map(m => ({
+    ...m,
+    totalActive: m.newUsers + m.returnUsers,
+  }));
   return (<>
     <div className="card">
       <h1>Nadia at Delta: AI coaching adoption overview</h1>
@@ -53,26 +57,30 @@ function Page1() {
         <div className="kpi" style={{background:'linear-gradient(135deg, #0084F0, #003FDC)', gridColumn: 'span 2'}}><div className="kpi-value">7.9</div><div className="kpi-label">Average Conversations per Active User</div></div>
       </div>
       <div className="chart-container" style={{ marginTop: 16 }}>
-        <h3 style={{ marginBottom: 8 }}>Monthly Active Users (New vs. Returning) & Coaching Conversations</h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <ComposedChart data={monthlyTimeline}>
+        <h3 style={{ marginBottom: 8 }}>Monthly Active Users — New vs. Returning</h3>
+        <ResponsiveContainer width="100%" height={420}>
+          <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-            <YAxis yAxisId="left" label={{ value: 'Active Users', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#393939' } }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Coaching Conversations', angle: 90, position: 'insideRight', style: { fontSize: 11, fill: '#393939' } }} />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
+            <YAxis label={{ value: 'Active Users', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#393939' } }} />
             <Tooltip />
             <Legend />
-            <Bar yAxisId="left" dataKey="returnUsers" stackId="users" fill={BLUE} name="Returning Users" radius={[0,0,0,0]} />
-            <Bar yAxisId="left" dataKey="newUsers" stackId="users" fill={BRIGHT_BLUE} name="New Users" radius={[4,4,0,0]} />
-            <Bar yAxisId="right" dataKey="conversations" fill={PINK} name="Coaching Conversations" radius={[4,4,0,0]} opacity={0.7} />
-          </ComposedChart>
+            <Bar dataKey="returnUsers" stackId="users" fill={BLUE} name="Returning Users" />
+            <Bar dataKey="newUsers" stackId="users" fill={BRIGHT_BLUE} name="New Users" radius={[4,4,0,0]}>
+              <LabelList dataKey="totalActive" content={(props) => {
+                const { x, y, width, value } = props;
+                if (!value || value < 50) return null;
+                return <text x={x + width / 2} y={y - 6} fill="#393939" fontSize={9} fontWeight={500} textAnchor="middle">{value.toLocaleString()}</text>;
+              }} />
+            </Bar>
+          </BarChart>
         </ResponsiveContainer>
       </div>
       <div className="narrative">
-        Nadia's growth follows Delta's talent calendar. The largest activation events were the year-end performance review cycle (December 2025 — 3,200 active users) and the annual goal-setting process (February 2026 — 4,500 active users generating 17,500 conversations). Embedding Nadia into formal talent processes is the most effective adoption driver. The strategic question is: how do we sustain engagement between these formal cycles?
+        Nadia's growth follows Delta's talent calendar. The largest activation events were the year-end performance review cycle (December 2025 — 3,200 active users) and the annual goal-setting process (February 2026 — 4,500 active users). Embedding Nadia into formal talent processes is the most effective adoption driver. The strategic question is: how do we sustain engagement between these formal cycles?
       </div>
       <div className="callout">
-        <strong>Key milestone:</strong> The Dec 2025 - Feb 2026 window generated over 38,000 coaching conversations — 76% of all Nadia activity — coinciding with year-end reviews and goal-setting. Return users outnumber new users 2:1 in the most recent months, indicating growing stickiness.
+        <strong>Key milestone:</strong> Return users outnumber new users 2:1 in the most recent months, indicating growing stickiness. The Dec 2025 - Feb 2026 window saw the highest sustained activity, coinciding with year-end reviews and goal-setting.
       </div>
     </div>
   </>);
@@ -85,72 +93,76 @@ function Page2() {
     <div className="card">
       <h1>Connecting Teams and Calendar doubles engagement</h1>
       <h2>The Integration Effect</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 16 }}>When employees connect their Microsoft Teams and Calendar to Nadia, their coaching engagement increases dramatically. This is the single highest-leverage intervention available for driving deeper, more sustained use of AI coaching across the organization.</p>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 16 }}>When employees connect their Microsoft Teams and Calendar to Nadia, their coaching engagement increases dramatically. This is the single highest-leverage intervention for driving deeper, more sustained coaching across the organization.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={320}>
-          <BarChart data={integrationEffect} layout="vertical" margin={{ left: 10 }}>
+          <BarChart data={integrationEffect} layout="vertical" margin={{ left: 10, right: 80 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" label={{ value: 'Average Coaching Conversations per User', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} />
+            <XAxis type="number" label={{ value: 'Average Coaching Conversations per User', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} tick={{ fontSize: 10 }} />
             <YAxis type="category" dataKey="label" width={180} tick={{ fontSize: 12 }} />
-            <Tooltip formatter={(value, name) => [value, 'Average Conversations']} />
+            <Tooltip formatter={(value) => [`${value} conversations`, 'Average']} />
             <Bar dataKey="avgConvos" fill={BLUE} radius={[0,4,4,0]}>
               <LabelList dataKey="avgConvos" content={(props) => {
                 const { x, y, width, value } = props;
-                return <text x={x + width + 6} y={y + 14} fill="#393939" fontSize={11} fontWeight={500}>{value} avg conversations</text>;
+                return <text x={x + width + 6} y={y + 14} fill="#393939" fontSize={11} fontWeight={500}>{value} avg</text>;
               }} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 8 }}>
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginTop: 12 }}>
           {integrationEffect.map((r, i) => (
-            <div key={i} style={{ fontSize: 11, color: '#9A9A9A' }}>
-              <strong style={{ color: '#393939' }}>{r.label}:</strong> {r.users.toLocaleString()} users
+            <div key={i} style={{ fontSize: 12, padding: '6px 12px', background: '#E8E9FD', borderRadius: 8 }}>
+              <strong>{r.label}</strong>: {r.users.toLocaleString()} users
             </div>
           ))}
         </div>
       </div>
       <div className="narrative">
-        The data is clear: integration drives engagement. Users who connect both Teams and Calendar average <strong>12.2 coaching conversations</strong> — more than double the 5.3 conversations from users with no integrations. Even connecting Teams alone lifts engagement to 9.5 conversations, an 80% increase. With 3,572 users (56% of the Nadia population) currently operating without any integration, this represents the largest untapped opportunity for deepening coaching engagement across Delta.
+        Users who connect both Teams and Calendar average <strong>12.2 coaching conversations</strong> — more than double the 5.3 conversations from users with no integrations. Even connecting Teams alone lifts engagement to 9.5 conversations, an 80% increase. With 3,572 users (56%) currently without any integration, this is the largest untapped engagement opportunity.
       </div>
     </div>
     <div className="card">
       <h2>Integration Engagement Multipliers</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 16 }}>Each integration creates a measurable lift in coaching depth. The table below compares average conversations for users with and without each integration type, quantifying the impact of each connection point.</p>
-      <table className="data-table" style={{ textAlign: 'center' }}>
-        <thead>
-          <tr>
-            <th style={{ textAlign: 'left' }}>Integration</th>
-            <th>Average Conversations (Connected)</th>
-            <th>Number of Users</th>
-            <th>Average Conversations (Not Connected)</th>
-            <th>Number of Users</th>
-            <th>Engagement Multiplier</th>
-          </tr>
-        </thead>
-        <tbody>
-          {integrationImpact.map((r, i) => (
-            <tr key={i} className="highlight">
-              <td style={{ textAlign: 'left' }}><strong>{r.factor}</strong></td>
-              <td>{r.withAvg}</td>
-              <td>{r.withUsers.toLocaleString()}</td>
-              <td>{r.withoutAvg}</td>
-              <td>{r.withoutUsers.toLocaleString()}</td>
-              <td><strong style={{ color: PINK }}>{r.multiplier}</strong></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 20 }}>Each integration creates a measurable lift in coaching depth. The chart below shows the before-and-after impact of connecting each integration.</p>
+      {integrationImpact.map((r, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, padding: '16px 20px', background: '#f8f8f8', borderRadius: 12 }}>
+          <div style={{ flex: '0 0 160px' }}>
+            <div style={{ fontSize: 14, fontWeight: 500, color: '#393939' }}>{r.factor}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 11, color: '#9A9A9A', marginBottom: 4 }}>Not Connected</div>
+              <div style={{ background: '#DFDFDF', borderRadius: 8, padding: '8px 16px' }}>
+                <div style={{ fontSize: 20, fontWeight: 300, fontFamily: 'var(--font-accent)' }}>{r.withoutAvg}</div>
+                <div style={{ fontSize: 10, color: '#9A9A9A' }}>{r.withoutUsers.toLocaleString()} users</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 24, color: PINK, fontWeight: 500 }}>→</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 11, color: '#9A9A9A', marginBottom: 4 }}>Connected</div>
+              <div style={{ background: '#E8E9FD', borderRadius: 8, padding: '8px 16px', border: `2px solid ${BLUE}` }}>
+                <div style={{ fontSize: 20, fontWeight: 300, fontFamily: 'var(--font-accent)', color: BLUE }}>{r.withAvg}</div>
+                <div style={{ fontSize: 10, color: '#9A9A9A' }}>{r.withUsers.toLocaleString()} users</div>
+              </div>
+            </div>
+            <div style={{ textAlign: 'center', marginLeft: 8 }}>
+              <div style={{ fontSize: 28, fontWeight: 300, fontFamily: 'var(--font-accent)', color: PINK }}>{r.multiplier}</div>
+              <div style={{ fontSize: 10, color: '#9A9A9A' }}>multiplier</div>
+            </div>
+          </div>
+        </div>
+      ))}
       <div className="narrative">
-        Across all three integration dimensions, the engagement multiplier is remarkably consistent: <strong>Teams integration drives a 1.9x lift</strong> (11.0 vs. 5.7 average conversations across 2,632 connected users), <strong>Calendar integration delivers the same 1.9x lift</strong> (12.3 vs. 6.4 across 1,572 users), and <strong>connecting both yields a combined 1.8x multiplier</strong> (12.2 vs. 6.7 across 1,403 users). The slight decrease in the "both" multiplier reflects that dual-connected users are being compared against a higher baseline that already includes single-integration users. The actionable insight for Delta's HR leadership: every percentage point increase in integration adoption directly translates to deeper coaching engagement and more sustained behavior change.
+        Across all three integration dimensions, the engagement multiplier is remarkably consistent: <strong>Teams drives a 1.9x lift</strong> (11.0 vs. 5.7 average conversations), <strong>Calendar delivers the same 1.9x lift</strong> (12.3 vs. 6.4), and <strong>both integrations together yield a 1.8x multiplier</strong> (12.2 vs. 6.7). Every percentage point increase in integration adoption directly translates to deeper coaching engagement and more sustained behavior change.
       </div>
       <div className="callout callout-green">
-        <strong>The bottom line:</strong> Integration is not optional — it is the primary driver of coaching depth. A targeted push to connect Teams and Calendar for the 3,572 users currently operating without integrations could generate an estimated 15,000+ additional coaching conversations based on the observed engagement multipliers.
+        <strong>The bottom line:</strong> Integration is the primary driver of coaching depth. Connecting Teams and Calendar for the 3,572 users currently without integrations could generate an estimated 15,000+ additional coaching conversations based on observed multipliers.
       </div>
     </div>
   </>);
 }
 
-// ─── PAGE 3: BU Adoption & Quality Matrix ───────────────
+// ─── PAGE 3: BU Adoption & Adoption Matrix ───────────────
 
 function Page3() {
   const bubbleData = buData.filter(b => b.pop >= 150).map(b => ({
@@ -161,7 +173,7 @@ function Page3() {
       <h1>Adoption varies widely by business unit</h1>
       <h2>Business Unit Adoption — Sorted by Population</h2>
       <table className="data-table">
-        <thead><tr><th>Business Unit</th><th>Population</th><th>Nadia Users</th><th>Adoption %</th><th>Avg Convos</th><th>Teams %</th><th>Calendar %</th></tr></thead>
+        <thead><tr><th>Business Unit</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th></tr></thead>
         <tbody>
           {buData.map((r, i) => (
             <tr key={i} className={r.rate >= 60 ? 'highlight' : r.rate < 25 ? 'danger' : ''}>
@@ -173,7 +185,7 @@ function Page3() {
       </table>
     </div>
     <div className="card">
-      <h2>BU Adoption Quality Matrix</h2>
+      <h2>BU Adoption Adoption Matrix</h2>
       <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size represents number of Nadia users. Hover over each bubble for details.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={480}>
@@ -210,7 +222,7 @@ function Page3() {
   </>);
 }
 
-// ─── PAGE 4: Grade Level Adoption & Quality Matrix ──────
+// ─── PAGE 4: Grade Level Adoption & Adoption Matrix ──────
 
 function Page4() {
   const gradeChart = gradeData.map(g => ({ ...g, name: `Grade ${g.grade}` }));
@@ -222,7 +234,7 @@ function Page4() {
       <h1>Adoption rate increases with seniority</h1>
       <h2>Grade Level Adoption — Sorted by Population</h2>
       <table className="data-table">
-        <thead><tr><th>Grade</th><th>Population</th><th>Nadia Users</th><th>Adoption %</th><th>Avg Convos</th><th>Teams %</th><th>Calendar %</th></tr></thead>
+        <thead><tr><th>Grade</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th></tr></thead>
         <tbody>
           {gradeData.map((r, i) => (
             <tr key={i} className={r.rate >= 55 ? 'highlight' : r.rate < 30 ? 'danger' : ''}>
@@ -234,7 +246,7 @@ function Page4() {
       </table>
     </div>
     <div className="card">
-      <h2>Grade Level Quality Matrix</h2>
+      <h2>Grade Level Adoption Matrix</h2>
       <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size represents number of Nadia users. Hover over each bubble for details.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={420}>
@@ -268,7 +280,7 @@ function Page4() {
   </>);
 }
 
-// ─── PAGE 5: Career Level Adoption & Quality Matrix ─────
+// ─── PAGE 5: Career Level Adoption & Adoption Matrix ─────
 
 function Page5() {
   const sorted = [...careerLevelData].sort((a, b) => b.rate - a.rate);
@@ -280,7 +292,7 @@ function Page5() {
       <h1>Frontline leaders and senior managers lead adoption</h1>
       <h2>Career Level Adoption — Sorted by Adoption Rate</h2>
       <table className="data-table">
-        <thead><tr><th>Career Level</th><th>Population</th><th>Nadia Users</th><th>Adoption %</th><th>Avg Convos</th></tr></thead>
+        <thead><tr><th>Career Level</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th></tr></thead>
         <tbody>
           {sorted.map((r, i) => (
             <tr key={i} className={r.rate >= 55 ? 'highlight' : r.rate < 35 ? 'danger' : ''}>
@@ -292,7 +304,7 @@ function Page5() {
       </table>
     </div>
     <div className="card">
-      <h2>Career Level Quality Matrix</h2>
+      <h2>Career Level Adoption Matrix</h2>
       <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Bubble size represents number of Nadia users. Hover over each bubble for details.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={420}>
@@ -345,12 +357,12 @@ function Page9() {
     <div className="card">
       <h2>Frontline Leaders by Business Unit</h2>
       <table className="data-table">
-        <thead><tr><th>Business Unit</th><th>Total FLLs</th><th>On Nadia</th><th>Adoption %</th><th>Teams %</th><th>Calendar %</th><th>Avg Convos</th></tr></thead>
+        <thead><tr><th>Business Unit</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th><th>Connect Users</th></tr></thead>
         <tbody>
           {fllData.fllByBu.map((r, i) => (
             <tr key={i}>
               <td>{r.bu}</td><td>{r.total}</td><td>{r.nadia}</td>
-              <td><strong>{r.rate}%</strong></td><td>{r.teamsPct}%</td><td>{r.calPct}%</td><td>{r.avgConvos}</td>
+              <td><strong>{r.rate}%</strong></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td><td>{r.connectUsers || '—'}</td>
             </tr>
           ))}
         </tbody>
@@ -365,64 +377,114 @@ function Page9() {
 // ─── PAGE 10: Skills Landscape (Filterable) ─────────────
 
 function Page10() {
-  const [filter, setFilter] = useState('all');
-  const filterOptions = [
-    { value: 'all', label: 'All Users' },
-    ...Object.keys(skillsFilterBu).map(bu => ({ value: `bu:${bu}`, label: bu })),
-    ...Object.keys(skillsFilterGrade).map(g => ({ value: `grade:${g}`, label: g })),
-  ];
+  const [buFilter, setBuFilter] = useState('all');
+  const [careerFilter, setCareerFilter] = useState('all');
+  const [gradeFilter, setGradeFilter] = useState('all');
 
-  let displayData;
-  if (filter === 'all') {
-    displayData = skillsLandscape.slice(0, 12);
-  } else if (filter.startsWith('bu:')) {
-    const bu = filter.replace('bu:', '');
-    const d = skillsFilterBu[bu];
-    const allSkills = new Set([...d.exhibited.map(s => s.skill), ...d.opportunity.map(s => s.skill)]);
-    displayData = Array.from(allSkills).map(skill => {
-      const ex = d.exhibited.find(s => s.skill === skill);
-      const op = d.opportunity.find(s => s.skill === skill);
-      return { skill, exhibited: ex ? ex.count : 0, opportunity: op ? op.count : 0 };
-    }).sort((a, b) => b.exhibited - a.exhibited).slice(0, 10);
-  } else if (filter.startsWith('grade:')) {
-    const grade = filter.replace('grade:', '');
-    const d = skillsFilterGrade[grade];
-    const allSkills = new Set([...d.exhibited.map(s => s.skill), ...d.opportunity.map(s => s.skill)]);
-    displayData = Array.from(allSkills).map(skill => {
-      const ex = d.exhibited.find(s => s.skill === skill);
-      const op = d.opportunity.find(s => s.skill === skill);
-      return { skill, exhibited: ex ? ex.count : 0, opportunity: op ? op.count : 0 };
-    }).sort((a, b) => b.exhibited - a.exhibited).slice(0, 10);
-  }
+  const selectStyle = {
+    padding: '6px 12px', borderRadius: 8, border: '1px solid #DFDFDF', fontSize: 12,
+    fontFamily: 'var(--font-primary)', background: 'white', cursor: 'pointer', minWidth: 180,
+  };
+
+  // Determine which filter is active (only one at a time)
+  const getDisplayData = () => {
+    let source = null;
+    let totalUsers = 6373;
+
+    if (buFilter !== 'all') {
+      source = skillsFilterBu[buFilter];
+    } else if (careerFilter !== 'all') {
+      source = skillsFilterCareer[careerFilter];
+    } else if (gradeFilter !== 'all') {
+      source = skillsFilterGrade[gradeFilter];
+    }
+
+    if (source) {
+      totalUsers = source.total;
+      if (totalUsers < 10) return { data: null, totalUsers };
+      const allSkills = new Set([...source.exhibited.map(s => s.skill), ...source.opportunity.map(s => s.skill)]);
+      const data = Array.from(allSkills).map(skill => {
+        const ex = source.exhibited.find(s => s.skill === skill);
+        const op = source.opportunity.find(s => s.skill === skill);
+        const exCount = ex ? ex.count : 0;
+        const opCount = op ? op.count : 0;
+        return {
+          skill,
+          exhibitedPct: Math.round(exCount / totalUsers * 100),
+          opportunityPct: Math.round(opCount / totalUsers * 100),
+        };
+      }).sort((a, b) => b.exhibitedPct - a.exhibitedPct).slice(0, 10);
+      return { data, totalUsers };
+    }
+
+    // Default: all users
+    return {
+      data: skillsLandscape.slice(0, 12).map(s => ({
+        skill: s.skill,
+        exhibitedPct: Math.round(s.exhibitedPct),
+        opportunityPct: Math.round(s.opportunityPct),
+      })),
+      totalUsers: 6373,
+    };
+  };
+
+  const { data: displayData, totalUsers } = getDisplayData();
+
+  const handleBu = (v) => { setBuFilter(v); if (v !== 'all') { setCareerFilter('all'); setGradeFilter('all'); } };
+  const handleCareer = (v) => { setCareerFilter(v); if (v !== 'all') { setBuFilter('all'); setGradeFilter('all'); } };
+  const handleGrade = (v) => { setGradeFilter(v); if (v !== 'all') { setBuFilter('all'); setCareerFilter('all'); } };
 
   return (<>
     <div className="card">
       <h1>What skills are Delta employees demonstrating?</h1>
-      <h2>Skills Landscape — Exhibited vs. Growth Opportunity</h2>
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ fontSize: 13, fontWeight: 500, marginRight: 8 }}>Filter by:</label>
-        <select value={filter} onChange={e => setFilter(e.target.value)} style={{
-          padding: '6px 12px', borderRadius: 8, border: '1px solid #DFDFDF', fontSize: 13,
-          fontFamily: 'var(--font-primary)', background: 'white', cursor: 'pointer', minWidth: 220,
-        }}>
-          {filterOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
+      <h2>Skills Landscape — Percent Exhibited vs. Growth Opportunity</h2>
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 500, display: 'block', marginBottom: 4, color: '#9A9A9A', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Business Unit</label>
+          <select value={buFilter} onChange={e => handleBu(e.target.value)} style={selectStyle}>
+            <option value="all">All Business Units</option>
+            {Object.keys(skillsFilterBu).sort().map(bu => <option key={bu} value={bu}>{bu}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 500, display: 'block', marginBottom: 4, color: '#9A9A9A', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Career Level</label>
+          <select value={careerFilter} onChange={e => handleCareer(e.target.value)} style={selectStyle}>
+            <option value="all">All Career Levels</option>
+            {Object.keys(skillsFilterCareer).sort().map(cl => <option key={cl} value={cl}>{cl}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 500, display: 'block', marginBottom: 4, color: '#9A9A9A', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Job Grade</label>
+          <select value={gradeFilter} onChange={e => handleGrade(e.target.value)} style={selectStyle}>
+            <option value="all">All Grade Levels</option>
+            {Object.keys(skillsFilterGrade).sort((a,b) => parseInt(a) - parseInt(b) || a.localeCompare(b)).map(g => <option key={g} value={g}>Grade {g}</option>)}
+          </select>
+        </div>
       </div>
-      <div className="chart-container">
-        <ResponsiveContainer width="100%" height={420}>
-          <BarChart data={displayData} layout="vertical" margin={{ left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" label={{ value: 'Number of Users', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} />
-            <YAxis type="category" dataKey="skill" width={140} tick={{ fontSize: 11 }} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="exhibited" fill={BLUE} name="% Exhibited" radius={[0,4,4,0]} />
-            <Bar dataKey="opportunity" fill={PINK} name="Growth Opportunity" radius={[0,4,4,0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {!displayData ? (
+        <div style={{ padding: 40, textAlign: 'center', color: '#9A9A9A', fontSize: 14, background: '#f8f8f8', borderRadius: 12 }}>
+          Insufficient data — fewer than 10 users in this filtered group.
+        </div>
+      ) : (
+        <>
+          <p style={{ fontSize: 12, color: '#9A9A9A', marginBottom: 8 }}>Showing data for {totalUsers.toLocaleString()} users. Each bar shows the percentage of users in this group.</p>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={420}>
+              <BarChart data={displayData} layout="vertical" margin={{ left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" domain={[0, 'auto']} label={{ value: 'Percent of Users (%)', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} unit="%" />
+                <YAxis type="category" dataKey="skill" width={140} tick={{ fontSize: 11 }} />
+                <Tooltip formatter={(value) => `${value}%`} />
+                <Legend />
+                <Bar dataKey="exhibitedPct" fill={BLUE} name="Exhibited (%)" radius={[0,4,4,0]} />
+                <Bar dataKey="opportunityPct" fill={PINK} name="Growth Opportunity (%)" radius={[0,4,4,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
       <div className="narrative">
-        Communication is the most commonly exhibited skill (63% of users), but also the top growth area. The most striking gap is <strong>Influencing Skills</strong> — exhibited by only 2.6% of users but flagged as a growth opportunity for 8.7%, a 3.3x gap ratio. Digital Fluency (8.1% opportunity vs 10.2% exhibited) also shows significant development potential.
+        Communication is the most commonly exhibited skill (63% of users), but also the top growth area. The most striking gap is <strong>Influencing Skills</strong> — exhibited by only 3% of users but flagged as a growth opportunity for 9%, a 3.3x gap ratio. Digital Fluency and Developing Others also show significant development potential across the organization.
       </div>
     </div>
   </>);

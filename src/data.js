@@ -90,11 +90,11 @@ export const fllData = {
   connectUsers: 61, connectAvgConvos: 31.1,
   noConnectUsers: 1312, noConnectAvgConvos: 9.3,
   fllByBu: [
-    { bu: 'Airport Customer Service', total: 950, nadia: 566, rate: 59.6, teamsPct: 30, calPct: 19, avgConvos: 11.1 },
-    { bu: 'Inflight Services', total: 336, nadia: 209, rate: 62.2, teamsPct: 46, calPct: 24, avgConvos: 9.7 },
-    { bu: 'TechOps', total: 180, nadia: 80, rate: 44.4, teamsPct: 26, calPct: 19, avgConvos: 7.7 },
-    { bu: 'Reservations & Cust. Care', total: 119, nadia: 96, rate: 80.7, teamsPct: 58, calPct: 40, avgConvos: 19.8 },
-    { bu: 'Cargo', total: 57, nadia: 28, rate: 49.1, teamsPct: 32, calPct: 36, avgConvos: 9.9 },
+    { bu: 'Airport Customer Service', total: 950, nadia: 566, rate: 59.6, teamsPct: 30, calPct: 19, avgConvos: 11.1, connectUsers: 25 },
+    { bu: 'Inflight Services', total: 336, nadia: 209, rate: 62.2, teamsPct: 46, calPct: 24, avgConvos: 9.7, connectUsers: 0 },
+    { bu: 'TechOps', total: 180, nadia: 80, rate: 44.4, teamsPct: 26, calPct: 19, avgConvos: 7.7, connectUsers: 1 },
+    { bu: 'Reservations & Cust. Care', total: 119, nadia: 96, rate: 80.7, teamsPct: 58, calPct: 40, avgConvos: 19.8, connectUsers: 26 },
+    { bu: 'Cargo', total: 57, nadia: 28, rate: 49.1, teamsPct: 32, calPct: 36, avgConvos: 9.9, connectUsers: 0 },
   ],
 };
 
@@ -117,65 +117,8 @@ export const skillsLandscape = [
   { skill: 'Adaptability', exhibited: 157, exhibitedPct: 2.5, opportunity: 124, opportunityPct: 1.9 },
 ];
 
-// Skills filters by BU (top 5 exhibited + opportunity per BU)
-export const skillsFilterBu = {
-  'Airport Customer Service': {
-    exhibited: [{ skill: 'Communication', count: 610 }, { skill: 'Managing Performance', count: 141 }, { skill: 'Accountability', count: 140 }, { skill: 'Strategic Thinking', count: 133 }, { skill: 'Developing Others', count: 95 }],
-    opportunity: [{ skill: 'Communication', count: 246 }, { skill: 'Accountability', count: 114 }, { skill: 'Managing Performance', count: 86 }, { skill: 'Strategic Thinking', count: 85 }, { skill: 'Developing Others', count: 75 }],
-  },
-  'TechOps': {
-    exhibited: [{ skill: 'Communication', count: 393 }, { skill: 'Strategic Thinking', count: 165 }, { skill: 'Accountability', count: 151 }, { skill: 'Managing Performance', count: 100 }, { skill: 'Decision Making', count: 79 }],
-    opportunity: [{ skill: 'Communication', count: 176 }, { skill: 'Accountability', count: 64 }, { skill: 'Digital Fluency', count: 53 }, { skill: 'Emotional Intelligence', count: 42 }, { skill: 'Strategic Thinking', count: 42 }],
-  },
-  'Information Technology': {
-    exhibited: [{ skill: 'Communication', count: 367 }, { skill: 'Accountability', count: 177 }, { skill: 'Strategic Thinking', count: 160 }, { skill: 'Digital Fluency', count: 157 }, { skill: 'Analytical Skills', count: 112 }],
-    opportunity: [{ skill: 'Communication', count: 192 }, { skill: 'Digital Fluency', count: 71 }, { skill: 'Accountability', count: 64 }, { skill: 'Influencing Skills', count: 60 }, { skill: 'Strategic Thinking', count: 47 }],
-  },
-  'Global Sales': {
-    exhibited: [{ skill: 'Communication', count: 324 }, { skill: 'Strategic Thinking', count: 136 }, { skill: 'Accountability', count: 87 }, { skill: 'Managing Performance', count: 52 }, { skill: 'Decision Making', count: 45 }],
-    opportunity: [{ skill: 'Communication', count: 142 }, { skill: 'Digital Fluency', count: 56 }, { skill: 'Strategic Thinking', count: 49 }, { skill: 'Influencing Skills', count: 45 }, { skill: 'Accountability', count: 40 }],
-  },
-  'Inflight Services': {
-    exhibited: [{ skill: 'Communication', count: 299 }, { skill: 'Strategic Thinking', count: 90 }, { skill: 'Accountability', count: 70 }, { skill: 'Managing Performance', count: 62 }, { skill: 'Emotional Intelligence', count: 54 }],
-    opportunity: [{ skill: 'Communication', count: 112 }, { skill: 'Strategic Thinking', count: 56 }, { skill: 'Accountability', count: 56 }, { skill: 'Managing Performance', count: 44 }, { skill: 'Influencing Skills', count: 42 }],
-  },
-  'HR & Labor': {
-    exhibited: [{ skill: 'Communication', count: 315 }, { skill: 'Strategic Thinking', count: 96 }, { skill: 'Accountability', count: 55 }, { skill: 'Decision Making', count: 51 }, { skill: 'Analytical Skills', count: 41 }],
-    opportunity: [{ skill: 'Communication', count: 154 }, { skill: 'Accountability', count: 53 }, { skill: 'Strategic Thinking', count: 42 }, { skill: 'Influencing Skills', count: 41 }, { skill: 'Emotional Intelligence', count: 38 }],
-  },
-  'Reservations & Cust. Care': {
-    exhibited: [{ skill: 'Communication', count: 172 }, { skill: 'Strategic Thinking', count: 41 }, { skill: 'Managing Performance', count: 27 }, { skill: 'Analytical Skills', count: 25 }, { skill: 'Accountability', count: 23 }],
-    opportunity: [{ skill: 'Communication', count: 87 }, { skill: 'Influencing Skills', count: 31 }, { skill: 'Digital Fluency', count: 30 }, { skill: 'Strategic Thinking', count: 28 }, { skill: 'Accountability', count: 27 }],
-  },
-  'Revenue Management': {
-    exhibited: [{ skill: 'Communication', count: 128 }, { skill: 'Strategic Thinking', count: 64 }, { skill: 'Analytical Skills', count: 33 }, { skill: 'Accountability', count: 31 }, { skill: 'Developing Others', count: 26 }],
-    opportunity: [{ skill: 'Communication', count: 84 }, { skill: 'Strategic Thinking', count: 23 }, { skill: 'Accountability', count: 19 }, { skill: 'Influencing Skills', count: 16 }, { skill: 'Developing Others', count: 15 }],
-  },
-};
-
-// Skills filters by grade band
-export const skillsFilterGrade = {
-  'Entry (4-5)': {
-    exhibited: [{ skill: 'Communication', count: 208 }, { skill: 'Accountability', count: 76 }, { skill: 'Organizational Skills', count: 66 }, { skill: 'Detail Oriented', count: 58 }, { skill: 'Analytical Skills', count: 54 }],
-    opportunity: [{ skill: 'Communication', count: 90 }, { skill: 'Organizational Skills', count: 29 }, { skill: 'Analytical Skills', count: 24 }, { skill: 'Accountability', count: 24 }, { skill: 'Digital Fluency', count: 23 }],
-  },
-  'Mid (6-7)': {
-    exhibited: [{ skill: 'Communication', count: 1485 }, { skill: 'Accountability', count: 461 }, { skill: 'Strategic Thinking', count: 442 }, { skill: 'Analytical Skills', count: 311 }, { skill: 'Organizational Skills', count: 248 }],
-    opportunity: [{ skill: 'Communication', count: 579 }, { skill: 'Digital Fluency', count: 223 }, { skill: 'Accountability', count: 215 }, { skill: 'Strategic Thinking', count: 167 }, { skill: 'Influencing Skills', count: 142 }],
-  },
-  'Senior (8-10)': {
-    exhibited: [{ skill: 'Communication', count: 1457 }, { skill: 'Strategic Thinking', count: 709 }, { skill: 'Accountability', count: 432 }, { skill: 'Managing Performance', count: 381 }, { skill: 'Decision Making', count: 308 }],
-    opportunity: [{ skill: 'Communication', count: 755 }, { skill: 'Influencing Skills', count: 265 }, { skill: 'Accountability', count: 253 }, { skill: 'Strategic Thinking', count: 240 }, { skill: 'Managing Performance', count: 194 }],
-  },
-  'Leadership (11-13)': {
-    exhibited: [{ skill: 'Communication', count: 420 }, { skill: 'Strategic Thinking', count: 240 }, { skill: 'Managing Performance', count: 136 }, { skill: 'Accountability', count: 97 }, { skill: 'Developing Others', count: 97 }],
-    opportunity: [{ skill: 'Communication', count: 209 }, { skill: 'Accountability', count: 106 }, { skill: 'Strategic Thinking', count: 102 }, { skill: 'Influencing Skills', count: 94 }, { skill: 'Developing Others', count: 78 }],
-  },
-  'Executive (14+)': {
-    exhibited: [{ skill: 'Communication', count: 16 }, { skill: 'Managing Performance', count: 12 }, { skill: 'Strategic Thinking', count: 11 }, { skill: 'Developing Others', count: 4 }, { skill: 'Decision Making', count: 3 }],
-    opportunity: [{ skill: 'Influencing Skills', count: 6 }, { skill: 'Strategic Thinking', count: 6 }, { skill: 'Accountability', count: 6 }, { skill: 'Communication', count: 3 }, { skill: 'Developing Others', count: 3 }],
-  },
-};
+// Skills filters - imported from generated data
+export { skillsFilterBu, skillsFilterCareer, skillsFilterGrade } from './_filters';
 
 // Skills needed for goal achievement cross-referenced with exhibited/opportunity
 export const goalSkillsAnalysis = [
