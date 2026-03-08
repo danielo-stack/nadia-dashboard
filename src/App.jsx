@@ -240,11 +240,6 @@ function Page3() {
     'Needs Activation': { color: '#E53935', icon: '◎', bg: '#FDECEA' },
   };
 
-  // Find integration opportunities
-  const highTeams = buData.filter(b => b.pop >= 100 && b.teamsPct >= 50).sort((a, b) => b.teamsPct - a.teamsPct);
-  const lowTeams = buData.filter(b => b.pop >= 100 && b.teamsPct < 35 && b.nadia >= 20).sort((a, b) => a.teamsPct - b.teamsPct);
-  const lowCal = buData.filter(b => b.pop >= 100 && b.calPct < 20 && b.nadia >= 20).sort((a, b) => a.calPct - b.calPct);
-
   return (<>
     <div className="card">
       <h1>Adoption varies widely by business unit</h1>
@@ -279,14 +274,6 @@ function Page3() {
           {showSmall ? 'Hide' : 'Show'} {smallBUs.length} smaller business units (under 300 employees)
         </button>
       )}
-      <div className="narrative" style={{ marginTop: 16 }}>
-        <strong>Integration opportunities:</strong>
-        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
-          <li><strong>Low Teams activation — easy wins:</strong> {lowTeams.slice(0, 5).map(b => `${b.bu} (${b.teamsPct}%)`).join(', ')}. Pushing Teams integrations in these BUs could significantly lift engagement based on the 1.9x multiplier observed org-wide.</li>
-          <li><strong>Low Calendar integration:</strong> {lowCal.slice(0, 5).map(b => `${b.bu} (${b.calPct}%)`).join(', ')}. Calendar-connected users average 12.3 conversations vs. 6.4 without.</li>
-          <li><strong>Integration leaders to model:</strong> {highTeams.slice(0, 3).map(b => `${b.bu} (${b.teamsPct}% Teams)`).join(', ')} — study their onboarding playbook for replication.</li>
-        </ul>
-      </div>
     </div>
     <div className="card">
       <h2>BU Adoption Matrix</h2>
@@ -325,6 +312,16 @@ function Page3() {
           );
         })}
       </div>
+      <div className="narrative" style={{ marginTop: 16 }}>
+        <strong>Key takeaways:</strong>
+        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
+          <li><strong>HR & Labor is the adoption benchmark.</strong> At 83.1% adoption and 11.2 avg conversations, HR & Labor demonstrates what full-scale Nadia engagement looks like. Their playbook should be studied and replicated.</li>
+          <li><strong>The two largest BUs are under-penetrated.</strong> TechOps (2,331 employees, 30.8%) and IT (2,099 employees, 33.6%) together represent over 4,400 employees with below-average adoption — the single largest growth opportunity by headcount.</li>
+          <li><strong>Reservations & Cust. Care has the deepest engagement.</strong> At 20.1 avg conversations per user and 66.9% adoption, this BU shows what happens when adoption and depth align.</li>
+          <li><strong>DLV Operations is a hidden gem.</strong> Only 14.7% adoption, but those who use Nadia average 25.8 conversations — the highest of any BU. Broadening awareness here could unlock significant engagement.</li>
+          <li><strong>Delta Professional Services is the biggest gap.</strong> At 4.9% adoption across 450 employees, this BU has barely been activated — a prime candidate for targeted onboarding.</li>
+        </ul>
+      </div>
     </div>
   </>);
 }
@@ -332,8 +329,12 @@ function Page3() {
 // ─── PAGE 4: Grade Level Adoption & Adoption Matrix ──────
 
 function Page4() {
+  const [showSmall, setShowSmall] = useState(false);
   const ADOPTION_MID = 43;
   const CONVOS_MID = 7.9;
+  const sortedGrades = [...gradeData].sort((a, b) => b.pop - a.pop);
+  const largeGrades = sortedGrades.filter(g => g.pop >= 100);
+  const smallGrades = sortedGrades.filter(g => g.pop < 100);
   const gradeBubble = gradeData.filter(g => g.pop >= 100).map(g => {
     let bucket, bucketColor;
     if (g.rate >= ADOPTION_MID && g.avgConvos >= CONVOS_MID) { bucket = 'Champions'; bucketColor = '#34A853'; }
@@ -356,14 +357,29 @@ function Page4() {
       <table className="data-table">
         <thead><tr><th>Grade</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th></tr></thead>
         <tbody>
-          {gradeData.map((r, i) => (
+          {largeGrades.map((r, i) => (
             <tr key={i}>
+              <td>{r.grade}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
+            </tr>
+          ))}
+          {showSmall && smallGrades.map((r, i) => (
+            <tr key={`s${i}`} style={{ opacity: 0.85 }}>
               <td>{r.grade}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
               <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {smallGrades.length > 0 && (
+        <button onClick={() => setShowSmall(!showSmall)} style={{
+          marginTop: 12, padding: '8px 16px', borderRadius: 8, border: '1px solid #DFDFDF',
+          background: showSmall ? '#E8E9FD' : 'white', cursor: 'pointer', fontSize: 12,
+          fontFamily: 'var(--font-primary)', color: '#393939',
+        }}>
+          {showSmall ? 'Hide' : 'Show'} {smallGrades.length} smaller grade levels (under 100 employees)
+        </button>
+      )}
     </div>
     <div className="card">
       <h2>Grade Level Adoption Matrix</h2>
@@ -424,9 +440,12 @@ function Page4() {
 // ─── PAGE 5: Career Level Adoption & Adoption Matrix ─────
 
 function Page5() {
+  const [showSmall, setShowSmall] = useState(false);
   const ADOPTION_MID = 43;
   const CONVOS_MID = 7.9;
-  const sorted = [...careerLevelData].sort((a, b) => b.rate - a.rate);
+  const sorted = [...careerLevelData].sort((a, b) => b.pop - a.pop);
+  const largeLevels = sorted.filter(c => c.pop >= 100);
+  const smallLevels = sorted.filter(c => c.pop < 100);
   const careerBubble = careerLevelData.filter(c => c.pop >= 50).map(c => {
     let bucket, bucketColor;
     if (c.rate >= ADOPTION_MID && c.avgConvos >= CONVOS_MID) { bucket = 'Champions'; bucketColor = '#34A853'; }
@@ -445,18 +464,33 @@ function Page5() {
   return (<>
     <div className="card">
       <h1>Frontline leaders and senior managers lead adoption</h1>
-      <h2>Career Level Adoption — Sorted by Adoption Rate</h2>
+      <h2>Career Level Adoption — Sorted by Population</h2>
       <table className="data-table">
         <thead><tr><th>Career Level</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th></tr></thead>
         <tbody>
-          {sorted.map((r, i) => (
+          {largeLevels.map((r, i) => (
             <tr key={i}>
+              <td>{r.level}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td>
+            </tr>
+          ))}
+          {showSmall && smallLevels.map((r, i) => (
+            <tr key={`s${i}`} style={{ opacity: 0.85 }}>
               <td>{r.level}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
               <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {smallLevels.length > 0 && (
+        <button onClick={() => setShowSmall(!showSmall)} style={{
+          marginTop: 12, padding: '8px 16px', borderRadius: 8, border: '1px solid #DFDFDF',
+          background: showSmall ? '#E8E9FD' : 'white', cursor: 'pointer', fontSize: 12,
+          fontFamily: 'var(--font-primary)', color: '#393939',
+        }}>
+          {showSmall ? 'Hide' : 'Show'} {smallLevels.length} smaller career levels (under 100 employees)
+        </button>
+      )}
     </div>
     <div className="card">
       <h2>Career Level Adoption Matrix</h2>
