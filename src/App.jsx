@@ -768,11 +768,11 @@ function App() {
           <h1 style={{ fontFamily: 'var(--font-accent)', fontSize: 28, marginBottom: 8 }}>Nadia at Delta</h1>
           <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 24 }}>Enter the access code to view this dashboard</p>
           <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && pw === 'Delta_Valence2026') setAuthed(true); }}
+            onKeyDown={e => { if (e.key === 'Enter' && pw.trim() === 'Delta_Valence2026') setAuthed(true); }}
             placeholder="Access code"
             style={{ width: '100%', padding: '10px 16px', borderRadius: 8, border: '1px solid #DFDFDF', fontSize: 14, fontFamily: 'var(--font-primary)', marginBottom: 12 }}
           />
-          <button onClick={() => { if (pw === 'Delta_Valence2026') setAuthed(true); }}
+          <button onClick={() => { if (pw.trim() === 'Delta_Valence2026') setAuthed(true); }}
             style={{ width: '100%', padding: '10px 16px', borderRadius: 8, background: BLUE, color: 'white', border: 'none', cursor: 'pointer', fontSize: 14, fontFamily: 'var(--font-primary)' }}>
             Enter
           </button>
