@@ -93,7 +93,6 @@ export const gradeData = [
   { grade: '8', pop: 1237, nadia: 644, rate: 52.1, avgConvos: 8.7, teamsPct: 44, calPct: 27 },
   { grade: '5', pop: 834, nadia: 271, rate: 32.5, avgConvos: 7.5, teamsPct: 42, calPct: 20 },
   { grade: '11', pop: 804, nadia: 438, rate: 54.5, avgConvos: 8.4, teamsPct: 46, calPct: 28 },
-  { grade: 'Unknown', pop: 585, nadia: 26, rate: 4.4, avgConvos: 4.0, teamsPct: 27, calPct: 12 },
   { grade: '12', pop: 330, nadia: 176, rate: 53.3, avgConvos: 5.4, teamsPct: 48, calPct: 28 },
   { grade: '4', pop: 232, nadia: 85, rate: 36.6, avgConvos: 4.1, teamsPct: 34, calPct: 18 },
   { grade: '1', pop: 200, nadia: 4, rate: 2.0, avgConvos: 1.5, teamsPct: 0, calPct: 0 },
