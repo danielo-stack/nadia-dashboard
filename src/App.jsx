@@ -695,11 +695,125 @@ const pages = [
 
 // ─── APP ────────────────────────────────────────────────
 
+// ─── PASSWORD GATE ──────────────────────────────────────
+
+function PasswordGate({ onUnlock }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (password === 'Delta_Valence2026') {
+      onUnlock();
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #9A31AF, #0009B4)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+    }}>
+      <div style={{
+        background: 'white',
+        borderRadius: 16,
+        padding: 48,
+        maxWidth: 440,
+        width: '100%',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+        textAlign: 'center',
+      }}>
+        <h1 style={{
+          fontFamily: "'Crimson Pro', Georgia, serif",
+          fontSize: 32,
+          fontWeight: 300,
+          color: '#393939',
+          marginBottom: 8,
+        }}>Nadia at Delta</h1>
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 14,
+          color: '#9A9A9A',
+          marginBottom: 32,
+          fontWeight: 300,
+        }}>AI Coaching Analytics Dashboard</p>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password"
+            autoFocus
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              border: `1px solid ${error ? '#FF2891' : '#DFDFDF'}`,
+              borderRadius: 8,
+              fontSize: 16,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 300,
+              color: '#393939',
+              outline: 'none',
+              transition: 'border-color 0.2s',
+              boxSizing: 'border-box',
+            }}
+            onFocus={(e) => { if (!error) e.target.style.borderColor = '#003FDC'; }}
+            onBlur={(e) => { if (!error) e.target.style.borderColor = '#DFDFDF'; }}
+          />
+          {error && (
+            <p style={{ color: '#FF2891', fontSize: 13, marginTop: 8, fontWeight: 400 }}>
+              Incorrect password. Please try again.
+            </p>
+          )}
+          <button type="submit" style={{
+            marginTop: 16,
+            width: '100%',
+            padding: '12px 32px',
+            background: '#003FDC',
+            color: 'white',
+            border: 'none',
+            borderRadius: 8,
+            fontSize: 16,
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+          }}
+            onMouseEnter={(e) => e.target.style.background = '#0009B4'}
+            onMouseLeave={(e) => e.target.style.background = '#003FDC'}
+          >
+            Enter Dashboard
+          </button>
+        </form>
+        <p style={{
+          marginTop: 24,
+          fontSize: 11,
+          color: '#9A9A9A',
+          fontWeight: 300,
+        }}>Confidential — Valence & Delta Air Lines</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── APP ────────────────────────────────────────────────
+
 export default function App() {
+  const [authenticated, setAuthenticated] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const PageComponent = pages[currentPage].component;
 
   const sections = [...new Set(pages.map(p => p.section))];
+
+  if (!authenticated) {
+    return <PasswordGate onUnlock={() => setAuthenticated(true)} />;
+  }
 
   return (
     <div className="app">
