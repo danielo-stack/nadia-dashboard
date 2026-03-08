@@ -198,21 +198,29 @@ function Page3() {
   const ADOPTION_MID = 43; // median adoption rate
   const CONVOS_MID = 7.9;  // org avg convos
 
-  const bubbleData = buData.filter(b => b.pop >= 150).map(b => {
+  // Manual overrides for specific BUs
+  const bucketOverrides = {
+    'Global Sales': 'Broad Adoption, Light Use',
+    'Enterprise Digital Strategy': 'Needs Activation',
+  };
+  const bubbleData = buData.filter(b => b.nadia >= 10).map(b => {
     let bucket, bucketColor, rec;
-    if (b.rate >= ADOPTION_MID && b.avgConvos >= CONVOS_MID) {
-      bucket = 'Champions'; bucketColor = '#34A853';
-      rec = 'Scale what works — use these BUs as internal case studies and peer advocates.';
+    const override = bucketOverrides[b.bu];
+    if (override) {
+      bucket = override;
+    } else if (b.rate >= ADOPTION_MID && b.avgConvos >= CONVOS_MID) {
+      bucket = 'Champions';
     } else if (b.rate < ADOPTION_MID && b.avgConvos >= CONVOS_MID) {
-      bucket = 'Power Users, Low Reach'; bucketColor = '#F09D00';
-      rec = 'Leverage super users as ambassadors to drive broader awareness and adoption.';
+      bucket = 'Power Users, Low Reach';
     } else if (b.rate >= ADOPTION_MID && b.avgConvos < CONVOS_MID) {
-      bucket = 'Broad Adoption, Light Use'; bucketColor = '#0084F0';
-      rec = 'Deepen engagement through integration nudges and goal-setting prompts.';
+      bucket = 'Broad Adoption, Light Use';
     } else {
-      bucket = 'Needs Activation'; bucketColor = '#E53935';
-      rec = 'Targeted onboarding campaigns and leadership sponsorship to spark initial adoption.';
+      bucket = 'Needs Activation';
     }
+    if (bucket === 'Champions') { bucketColor = '#34A853'; rec = 'Scale what works — use these BUs as internal case studies and peer advocates.'; }
+    else if (bucket === 'Power Users, Low Reach') { bucketColor = '#F09D00'; rec = 'Leverage super users as ambassadors to drive broader awareness and adoption.'; }
+    else if (bucket === 'Broad Adoption, Light Use') { bucketColor = '#0084F0'; rec = 'Deepen engagement through integration nudges and goal-setting prompts.'; }
+    else { bucketColor = '#E53935'; rec = 'Targeted onboarding campaigns and leadership sponsorship to spark initial adoption.'; }
     return { x: b.rate, y: b.avgConvos, z: b.nadia, fullName: b.bu, bucket, bucketColor, rec };
   });
 
@@ -340,8 +348,25 @@ function Page4() {
           </ScatterChart>
         </ResponsiveContainer>
       </div>
-      <div className="callout">
-        <strong>Pattern:</strong> Grade 7S (frontline leaders) leads adoption at 60.6% with 11.5 avg convos, followed by Grade 11 (54.5%) and Grade 10 (53.4%). Entry-level grades (4-5) and very senior grades (14+) show the lowest adoption — likely different intervention strategies are needed for each end.
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
+        {bucketNames.map(bk => {
+          const items = gradeBubble.filter(b => b.bucket === bk);
+          if (!items.length) return null;
+          const meta = bucketMeta[bk];
+          const recs = {
+            'Champions': 'These grades show both high adoption and deep engagement — ideal for peer mentoring and internal advocacy programs.',
+            'Power Users, Low Reach': 'Employees at these grades who adopt Nadia use it intensively. Focus on driving broader awareness to unlock this potential.',
+            'Broad Adoption, Light Use': 'Good adoption but shallow engagement. Promote integrations and goal-setting to deepen usage.',
+            'Needs Activation': 'Low adoption and engagement — consider targeted onboarding campaigns or embedding Nadia into existing grade-level programs.',
+          };
+          return (
+            <div key={bk} style={{ background: meta.bg, borderRadius: 10, padding: '12px 16px', borderLeft: `4px solid ${meta.color}` }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: meta.color, marginBottom: 6 }}>{bk}</div>
+              <div style={{ fontSize: 12, color: '#393939', marginBottom: 6 }}>{items.map(i => i.fullName).join(', ')}</div>
+              <div style={{ fontSize: 11, color: '#666', fontStyle: 'italic' }}>{recs[bk]}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   </>);
@@ -407,8 +432,25 @@ function Page5() {
           </ScatterChart>
         </ResponsiveContainer>
       </div>
-      <div className="narrative">
-        Frontline Leaders (61.1% adoption, 11.5 avg convos) and Sr. Managers (58.5%, 11.8) sit in the top-right quadrant — high adoption AND deep engagement. Individual contributors (Specialists at 38.2%, Analysts at 31.1%) show lower adoption but still meaningful engagement when they do adopt. The VP and Sr. VP levels have the lowest adoption, likely reflecting different coaching needs at the executive tier.
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
+        {bucketNames.map(bk => {
+          const items = careerBubble.filter(b => b.bucket === bk);
+          if (!items.length) return null;
+          const meta = bucketMeta[bk];
+          const recs = {
+            'Champions': 'These career levels show the strongest product-market fit. Use them as internal advocates and coaching champions.',
+            'Power Users, Low Reach': 'Deep engagement among adopters — focus on driving broader awareness and manager sponsorship at these levels.',
+            'Broad Adoption, Light Use': 'Good reach but shallow usage. Promote integrations and structured coaching programs to deepen engagement.',
+            'Needs Activation': 'Low adoption and engagement. Consider tailored onboarding, executive sponsorship, or embedding into existing development programs.',
+          };
+          return (
+            <div key={bk} style={{ background: meta.bg, borderRadius: 10, padding: '12px 16px', borderLeft: `4px solid ${meta.color}` }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: meta.color, marginBottom: 6 }}>{bk}</div>
+              <div style={{ fontSize: 12, color: '#393939', marginBottom: 6 }}>{items.map(i => i.fullName).join(', ')}</div>
+              <div style={{ fontSize: 11, color: '#666', fontStyle: 'italic' }}>{recs[bk]}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   </>);
@@ -428,8 +470,8 @@ function Page9() {
         <div className="kpi"><div className="kpi-value">{totalFll.toLocaleString()}</div><div className="kpi-label">Total FLLs at Delta</div></div>
         <div className="kpi"><div className="kpi-value">{totalNadia.toLocaleString()}</div><div className="kpi-label">FLLs Using Nadia</div><div className="kpi-sub">{adoptionPct}% adoption</div></div>
         <div className="kpi"><div className="kpi-value">10.2</div><div className="kpi-label">Avg Conversations</div><div className="kpi-sub">29% above org-wide mean</div></div>
-        <div className="kpi"><div className="kpi-value">61</div><div className="kpi-label">Connect Users</div></div>
-        <div className="kpi" style={{background:'linear-gradient(135deg, #9A31AF, #0009B4)', gridColumn: 'span 2'}}><div className="kpi-value">3.7x</div><div className="kpi-label">Connect Session Multiplier</div><div className="kpi-sub">31.1 avg convos (Connect) vs. 9.3 (non-Connect)</div></div>
+        <div className="kpi"><div className="kpi-value">121</div><div className="kpi-label">Users Who Have Utilized Nadia for Delta Connect</div></div>
+        <div className="kpi" style={{background:'linear-gradient(135deg, #9A31AF, #0009B4)', gridColumn: 'span 2'}}><div className="kpi-value">3.7x</div><div className="kpi-label">Connect Session Multiplier</div><div className="kpi-sub">28.0 avg convos (Connect) vs. 7.7 (non-Connect)</div></div>
       </div>
     </div>
     <div className="card">
@@ -461,7 +503,7 @@ function Page9() {
         <strong>Key takeaways:</strong>
         <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
           <li><strong>FLLs are Nadia's most engaged audience.</strong> At {adoptionPct}% adoption and 10.2 avg conversations, they outperform the org-wide mean by 29%. This validates Nadia's product-market fit for the frontline leader population.</li>
-          <li><strong>Connect is a force multiplier.</strong> The 61 FLLs using Connect average 3.7x more conversations than non-Connect FLLs. Expanding Connect access to Airport Customer Service (25 current users out of 566 FLLs) is the highest-leverage move.</li>
+          <li><strong>Connect is a force multiplier.</strong> The 112 FLLs using Connect average 3.7x more conversations than non-Connect FLLs (28.0 vs. 7.7). Expanding Connect access to Airport Customer Service (33 current users out of 566 FLLs) is the highest-leverage move.</li>
           <li><strong>Integration gaps persist.</strong> Teams activation among FLLs ranges from 26% (TechOps) to 58% (Reservations). Closing this gap could lift engagement materially, based on the integration effect observed org-wide.</li>
           <li><strong>Inflight Services is an untapped Connect opportunity.</strong> 209 FLLs with 0 Connect users — introducing Connect here could unlock a similar engagement multiplier.</li>
         </ul>
