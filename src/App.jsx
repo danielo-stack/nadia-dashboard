@@ -22,18 +22,17 @@ const PURPLE = '#9A31AF';
 const DARK_BLUE = '#0009B4';
 const LIGHT_GREEN = '#34A853';
 
-// Color-code helper for % Using Nadia cells (red → yellow → green)
+// Color-code helper for % Using Nadia cells (warm amber → bright green)
 const getRateStyle = (rate) => {
-  const hue = Math.min(rate, 100) * 1.2; // 0=red, 60=yellow, 120=green
+  let bg, color;
+  if (rate >= 60) { bg = '#C8E6C9'; color = '#1B5E20'; }
+  else if (rate >= 45) { bg = '#DCEDC8'; color = '#33691E'; }
+  else if (rate >= 35) { bg = '#FFF9C4'; color = '#F57F17'; }
+  else if (rate >= 25) { bg = '#FFE0B2'; color = '#E65100'; }
+  else { bg = '#FFCCBC'; color = '#BF360C'; }
   return {
-    background: `hsl(${hue}, 75%, 90%)`,
-    color: `hsl(${hue}, 70%, 28%)`,
-    fontWeight: 600,
-    borderRadius: 4,
-    padding: '2px 8px',
-    display: 'inline-block',
-    minWidth: 48,
-    textAlign: 'center',
+    background: bg, color, fontWeight: 600, borderRadius: 4,
+    padding: '2px 8px', display: 'inline-block', minWidth: 48, textAlign: 'center',
   };
 };
 
@@ -64,7 +63,7 @@ function Page1() {
   return (<>
     <div className="card">
       <h1>Nadia at Delta: AI coaching adoption overview</h1>
-      <h2>Growth Timeline — March 2026</h2>
+      <h2>Engagement Overview — March 2026</h2>
       <div className="kpi-grid">
         <div className="kpi"><div className="kpi-value">8,205</div><div className="kpi-label">Total Registered Users</div></div>
         <div className="kpi"><div className="kpi-value">6,425</div><div className="kpi-label">Total Active Nadia Users</div><div className="kpi-sub">44.0% of merit population</div></div>
@@ -73,34 +72,30 @@ function Page1() {
         <div className="kpi" style={{background:'linear-gradient(135deg, #0084F0, #003FDC)', gridColumn: 'span 2'}}><div className="kpi-value">7.9</div><div className="kpi-label">Average Conversations per Active User</div></div>
       </div>
       <div className="chart-container" style={{ marginTop: 16 }}>
-        <h3 style={{ marginBottom: 8 }}>Monthly Active Users — New vs. Returning</h3>
-        <ResponsiveContainer width="100%" height={340}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
+        <h3 style={{ marginBottom: 8 }}>Monthly Active Users (New vs. Returning) and New Registrations</h3>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
             <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-            <YAxis label={{ value: 'Active Users', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#393939' } }} />
-            <Tooltip />
+            <YAxis label={{ value: 'Users', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#393939' } }} />
+            <Tooltip content={({ payload, label }) => {
+              if (!payload || !payload.length) return null;
+              const d = payload[0].payload;
+              return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
+                <strong>{label}</strong><br/>
+                Active Users: {d.totalActive.toLocaleString()} (New: {d.newUsers.toLocaleString()}, Return: {d.returnUsers.toLocaleString()})<br/>
+                New Registrations: {d.newRegistered.toLocaleString()}
+              </div>);
+            }} />
             <Legend />
-            <Bar dataKey="returnUsers" stackId="users" fill={BLUE} name="Returning Users" />
-            <Bar dataKey="newUsers" stackId="users" fill={BRIGHT_BLUE} name="New Users" radius={[4,4,0,0]}>
+            <Bar dataKey="returnUsers" stackId="active" fill={BLUE} name="Returning Active Users" />
+            <Bar dataKey="newUsers" stackId="active" fill={BRIGHT_BLUE} name="New Active Users" radius={[4,4,0,0]}>
               <LabelList dataKey="totalActive" content={(props) => {
                 const { x, y, width, value } = props;
                 if (!value || value < 50) return null;
                 return <text x={x + width / 2} y={y - 6} fill="#393939" fontSize={9} fontWeight={500} textAnchor="middle">{value.toLocaleString()}</text>;
               }} />
             </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="chart-container" style={{ marginTop: 16 }}>
-        <h3 style={{ marginBottom: 8 }}>New Registrations per Month</h3>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-            <YAxis label={{ value: 'Registrations', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#393939' } }} />
-            <Tooltip />
-            <Bar dataKey="newRegistered" fill={LIGHT_GREEN} name="New Registrations" radius={[4,4,0,0]}>
+            <Bar dataKey="newRegistered" fill={LIGHT_GREEN} name="New Registrations" radius={[4,4,0,0]} opacity={0.8}>
               <LabelList dataKey="newRegistered" content={(props) => {
                 const { x, y, width, value } = props;
                 if (!value || value < 30) return null;
@@ -111,10 +106,43 @@ function Page1() {
         </ResponsiveContainer>
       </div>
       <div className="narrative">
-        Nadia's growth follows Delta's talent calendar. The largest activation events were the year-end performance review cycle (December 2025 — 3,142 active users) and the annual goal-setting process (February 2026 — 3,143 active users). Embedding Nadia into formal talent processes is the most effective adoption driver. The strategic question is: how do we sustain engagement between these formal cycles?
+        Nadia's growth follows Delta's talent calendar. The largest activation events were the year-end performance review cycle (December 2025 — 3,142 active users) and the annual goal-setting process (February 2026 — 3,143 active users). Embedding Nadia into formal talent processes is the most effective adoption driver. Return users outnumber new users 2:1 in recent months, indicating growing stickiness.
       </div>
-      <div className="callout">
-        <strong>Key milestone:</strong> Return users outnumber new users 2:1 in the most recent months, indicating growing stickiness. The Dec 2025 - Feb 2026 window saw the highest sustained activity, coinciding with year-end reviews and goal-setting.
+    </div>
+    <div className="card">
+      <h2>The Integration Effect</h2>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 16 }}>Employees who connect their Microsoft Teams and Calendar to Nadia tend to have more coaching conversations. This is a strong lever we see consistently driving more usage across the organization.</p>
+      <div className="chart-container">
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={integrationEffect} layout="vertical" margin={{ left: 10, right: 80, top: 10, bottom: 10 }}>
+            <XAxis type="number" tick={{ fontSize: 10 }} />
+            <YAxis type="category" dataKey="label" width={180} tick={{ fontSize: 12 }} />
+            <Tooltip content={({ payload }) => {
+              if (!payload || !payload.length) return null;
+              const d = payload[0].payload;
+              return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
+                <strong>{d.label}</strong><br/>{d.avgConvos} avg conversations<br/>{d.users.toLocaleString()} total users
+              </div>);
+            }} />
+            <Bar dataKey="avgConvos" fill={BLUE} radius={[0,4,4,0]}>
+              <LabelList dataKey="avgConvos" content={(props) => {
+                const { x, y, width, value } = props;
+                return <text x={x + width + 6} y={y + 14} fill="#393939" fontSize={11} fontWeight={500}>{value} avg convos</text>;
+              }} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+        <p style={{ fontSize: 11, color: '#9A9A9A', textAlign: 'center', marginTop: 4 }}>Average Coaching Conversations per User</p>
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginTop: 12 }}>
+          {integrationEffect.map((r, i) => (
+            <div key={i} style={{ fontSize: 12, padding: '6px 12px', background: '#E8E9FD', borderRadius: 8 }}>
+              <strong>{r.label}</strong>: {r.users.toLocaleString()} users
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="narrative">
+        Users who connect both Teams and Calendar average <strong>12.2 coaching conversations</strong>, compared to 5.3 for users with no integrations. Even connecting Teams alone lifts engagement to 9.5 conversations. With 3,572 users (56%) currently without any integration, encouraging adoption of these integrations represents a meaningful opportunity to deepen coaching engagement.
       </div>
     </div>
   </>);
@@ -389,17 +417,19 @@ function Page5() {
 // ─── PAGE 9: Frontline Leaders ──────────────────────────
 
 function Page9() {
+  const totalFll = fllData.fllByBu.reduce((s, r) => s + r.total, 0);
+  const totalNadia = fllData.fllByBu.reduce((s, r) => s + r.nadia, 0);
+  const adoptionPct = Math.round(totalNadia / totalFll * 1000) / 10;
   return (<>
     <div className="card">
       <h1>Frontline leaders: Nadia's natural power users</h1>
       <h2>Frontline Leader Spotlight</h2>
       <div className="kpi-grid">
-        <div className="kpi"><div className="kpi-value">1,373</div><div className="kpi-label">FLLs on Nadia</div></div>
-        <div className="kpi"><div className="kpi-value">10.2</div><div className="kpi-label">Avg Conversations</div></div>
-        <div className="kpi" style={{background:'linear-gradient(135deg, #9A31AF, #0009B4)'}}><div className="kpi-value">3.7x</div><div className="kpi-label">Connect Session Multiplier</div></div>
-      </div>
-      <div className="narrative">
-        Frontline leaders (FLLs) average 10.2 conversations — 29% above the org-wide mean. The 61 FLLs who have used Delta Connect average 31.1 conversations, a 3.7x multiplier vs. non-Connect FLLs (9.3). Connect is the highest-impact product feature for this audience.
+        <div className="kpi"><div className="kpi-value">{totalFll.toLocaleString()}</div><div className="kpi-label">Total FLLs at Delta</div></div>
+        <div className="kpi"><div className="kpi-value">{totalNadia.toLocaleString()}</div><div className="kpi-label">FLLs Using Nadia</div><div className="kpi-sub">{adoptionPct}% adoption</div></div>
+        <div className="kpi"><div className="kpi-value">10.2</div><div className="kpi-label">Avg Conversations</div><div className="kpi-sub">29% above org-wide mean</div></div>
+        <div className="kpi"><div className="kpi-value">61</div><div className="kpi-label">Connect Users</div></div>
+        <div className="kpi" style={{background:'linear-gradient(135deg, #9A31AF, #0009B4)', gridColumn: 'span 2'}}><div className="kpi-value">3.7x</div><div className="kpi-label">Connect Session Multiplier</div><div className="kpi-sub">31.1 avg convos (Connect) vs. 9.3 (non-Connect)</div></div>
       </div>
     </div>
     <div className="card">
@@ -413,10 +443,28 @@ function Page9() {
               <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td><td>{r.connectUsers || '—'}</td>
             </tr>
           ))}
+          <tr style={{ fontWeight: 600, borderTop: '2px solid #393939' }}>
+            <td>Total</td>
+            <td>{totalFll.toLocaleString()}</td>
+            <td>{totalNadia.toLocaleString()}</td>
+            <td><span style={getRateStyle(adoptionPct)}>{adoptionPct}%</span></td>
+            <td>10.2</td>
+            <td>—</td><td>—</td>
+            <td>{fllData.connectUsers}</td>
+          </tr>
         </tbody>
       </table>
       <div className="callout callout-green">
         <strong>Standout:</strong> Reservations & Cust. Care FLLs have 80.7% adoption and 19.8 avg conversations — the most engaged frontline leader cohort. Airport Customer Service has the most FLLs (950 total) with room to grow integration rates.
+      </div>
+      <div className="narrative" style={{ marginTop: 12 }}>
+        <strong>Key takeaways:</strong>
+        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
+          <li><strong>FLLs are Nadia's most engaged audience.</strong> At {adoptionPct}% adoption and 10.2 avg conversations, they outperform the org-wide mean by 29%. This validates Nadia's product-market fit for the frontline leader population.</li>
+          <li><strong>Connect is a force multiplier.</strong> The 61 FLLs using Connect average 3.7x more conversations than non-Connect FLLs. Expanding Connect access to Airport Customer Service (25 current users out of 566 FLLs) is the highest-leverage move.</li>
+          <li><strong>Integration gaps persist.</strong> Teams activation among FLLs ranges from 26% (TechOps) to 58% (Reservations). Closing this gap could lift engagement materially, based on the integration effect observed org-wide.</li>
+          <li><strong>Inflight Services is an untapped Connect opportunity.</strong> 209 FLLs with 0 Connect users — introducing Connect here could unlock a similar engagement multiplier.</li>
+        </ul>
       </div>
     </div>
   </>);
@@ -515,24 +563,35 @@ function Page10() {
         </div>
       ) : (
         <>
-          <p style={{ fontSize: 12, color: '#9A9A9A', marginBottom: 8 }}>Showing data for {totalUsers.toLocaleString()} users. Each bar shows the percentage of users in this group.</p>
+          <p style={{ fontSize: 12, color: '#9A9A9A', marginBottom: 8 }}>Showing data for {totalUsers.toLocaleString()} users where Nadia had enough coaching data to assess specific skills. Each bar shows the combined percentage of users exhibiting the skill and those with growth opportunity.</p>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={420}>
               <BarChart data={displayData} layout="vertical" margin={{ left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 'auto']} label={{ value: 'Percent of Users (%)', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} unit="%" />
+                <XAxis type="number" domain={[0, 'auto']} unit="%" tick={{ fontSize: 10 }} />
                 <YAxis type="category" dataKey="skill" width={140} tick={{ fontSize: 11 }} />
                 <Tooltip formatter={(value) => `${value}%`} />
                 <Legend />
-                <Bar dataKey="exhibitedPct" fill={BLUE} name="Exhibited (%)" radius={[0,4,4,0]} />
-                <Bar dataKey="opportunityPct" fill={PINK} name="Growth Opportunity (%)" radius={[0,4,4,0]} />
+                <Bar dataKey="exhibitedPct" stackId="skill" fill={BLUE} name="Exhibited (%)" />
+                <Bar dataKey="opportunityPct" stackId="skill" fill={PINK} name="Growth Opportunity (%)" radius={[0,4,4,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </>
       )}
+      <div className="callout" style={{ background: '#FFF9C4', borderLeft: '4px solid #F57F17' }}>
+        <strong>Note:</strong> Skills data reflects Nadia's high-level assessment based on coaching conversation analysis. This is a beta capability — results should be interpreted as directional indicators, not definitive evaluations of individual competency.
+      </div>
       <div className="narrative">
         Communication is the most commonly exhibited skill (63% of users), but also the top growth area. The most striking gap is <strong>Influencing Skills</strong> — exhibited by only 3% of users but flagged as a growth opportunity for 9%, a 3.3x gap ratio. Digital Fluency and Developing Others also show significant development potential across the organization.
+      </div>
+      <div className="narrative" style={{ marginTop: 8 }}>
+        <strong>Key takeaways:</strong>
+        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
+          <li><strong>Communication dominates.</strong> 63% of users exhibit this skill, reflecting its centrality to coaching conversations. However, 28% also flag it as a growth area — suggesting self-awareness about communication gaps.</li>
+          <li><strong>Influencing Skills is the biggest gap.</strong> Only 2.6% exhibit it, yet 8.7% identify it as a growth opportunity. This 3.3x gap ratio makes it the top skill development priority.</li>
+          <li><strong>Digital Fluency shows latent demand.</strong> 10% exhibit it but 8% need development — as Delta accelerates its digital transformation, this skill gap may widen without targeted coaching.</li>
+          <li><strong>Filter by BU, career level, or grade</strong> to see how skill profiles differ across the organization and tailor development priorities accordingly.</li>
+        </ul>
       </div>
     </div>
   </>);
@@ -581,8 +640,7 @@ function Page12() {
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={420}>
           <BarChart data={buChart} layout="vertical" margin={{ left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" label={{ value: 'Goal-Setting %', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} domain={[0, 50]} />
+            <XAxis type="number" domain={[0, 50]} tick={{ fontSize: 10 }} />
             <YAxis type="category" dataKey="bu" width={170} tick={{ fontSize: 10 }} />
             <Tooltip />
             <Bar dataKey="goalPct" fill={BLUE} radius={[0,4,4,0]}>
@@ -603,9 +661,8 @@ function Page12() {
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={360}>
           <BarChart data={gradeChart}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="grade" tick={{ fontSize: 11 }} label={{ value: 'Grade Level', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} />
-            <YAxis label={{ value: 'Goal-Setting %', angle: -90, position: 'insideLeft', style: { fontSize: 11 } }} />
+            <XAxis dataKey="grade" tick={{ fontSize: 11 }} />
+            <YAxis tick={{ fontSize: 10 }} />
             <Tooltip />
             <Bar dataKey="goalPct" fill={PINK} radius={[4,4,0,0]}>
               <LabelList dataKey="goalPct" content={renderPctLabel} />
@@ -651,7 +708,8 @@ function Page13() {
       </div>
     </div>
     <div className="card">
-      <h2>Top Skills Needed to Achieve Goals — by Grade Band</h2>
+      <h2>Skills Needed to Achieve Goals — by Grade Band</h2>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>The skills employees need to achieve their stated goals, broken down by seniority level.</p>
       <table className="data-table">
         <thead><tr><th>Grade Band</th><th>#1 Skill</th><th>#2 Skill</th><th>#3 Skill</th><th>#4 Skill</th><th>#5 Skill</th></tr></thead>
         <tbody>
@@ -668,14 +726,29 @@ function Page13() {
       <div className="callout">
         <strong>Key shift:</strong> As employees progress from entry to leadership, their skill needs shift from Communication → Strategic Thinking → Influencing Skills. This mirrors the barrier progression from Knowledge gaps to Organizational/Structural challenges.
       </div>
+      <h3 style={{ marginTop: 20 }}>Skills Needed for Goals vs. Current Profile</h3>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>How do the skills employees need for their goals compare to what they're currently demonstrating?</p>
+      <div className="chart-container">
+        <ResponsiveContainer width="100%" height={380}>
+          <BarChart data={goalSkillsAnalysis} layout="vertical" margin={{ left: 20 }}>
+            <XAxis type="number" tick={{ fontSize: 10 }} />
+            <YAxis type="category" dataKey="skill" width={140} tick={{ fontSize: 11 }} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="neededForGoals" fill={PINK} name="Needed for Goals" radius={[0,4,4,0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="callout callout-red">
+        <strong>Critical gap:</strong> Influencing Skills is needed for goals by 285 users but only exhibited by 168 — while 553 users have it flagged as a growth opportunity. This is the #1 skill gap where Nadia can help employees bridge from "needed" to "demonstrated."
+      </div>
     </div>
     <div className="card">
       <h2>Goal Quality Gaps</h2>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={goalQuality} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" domain={[0, 100]} label={{ value: '% of Goals', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }} />
+            <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10 }} />
             <YAxis type="category" dataKey="gap" width={160} tick={{ fontSize: 11 }} />
             <Tooltip />
             <Bar dataKey="pct" fill={PINK} radius={[0,4,4,0]}>
@@ -847,21 +920,22 @@ function Page18() {
 
 // ─── Pages array ────────────────────────────────────────
 
-const pages = [Page1, Page2, Page3, Page4, Page5, Page9, Page10, Page11, Page12, Page13, Page14, Page18];
+const pages = [Page1, Page3, Page4, Page5, Page9, Page10, Page12, Page13, Page18];
 const pageNames = [
-  'Growth Timeline', 'Integration Effect',
+  'Engagement Overview',
   'BU Adoption', 'Grade Level Adoption', 'Career Level Adoption',
   'Frontline Leaders',
-  'Skills Landscape', 'Skills for Goal Achievement',
-  'Goal Engagement', 'Goal Barriers & Skills', 'Goal Barriers by BU',
+  'Skills Landscape',
+  'Goal Engagement', 'Goal Barriers & Skills',
   'Recommendations'
 ];
 
 const navSections = [
-  { label: 'Overview', pages: [0, 1] },
-  { label: 'Adoption', pages: [2, 3, 4, 5] },
-  { label: 'Skills & Goals', pages: [6, 7, 8, 9, 10] },
-  { label: 'Strategy', pages: [11] },
+  { label: 'Engagement', pages: [0] },
+  { label: 'Adoption', pages: [1, 2, 3, 4] },
+  { label: 'Goals', pages: [6, 7] },
+  { label: 'Skills', pages: [5] },
+  { label: 'Strategy', pages: [8] },
 ];
 
 // ─── APP ────────────────────────────────────────────────
