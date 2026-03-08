@@ -195,15 +195,23 @@ function Page2() {
 // ─── PAGE 3: BU Adoption & Adoption Matrix ───────────────
 
 function Page3() {
-  const ADOPTION_MID = 43; // median adoption rate
-  const CONVOS_MID = 7.9;  // org avg convos
+  const [showSmall, setShowSmall] = useState(false);
+  const ADOPTION_MID = 43;
+  const CONVOS_MID = 7.9;
 
-  // Manual overrides for specific BUs
+  const largeBUs = buData.filter(b => b.pop >= 300);
+  const smallBUs = buData.filter(b => b.pop < 300);
+  const totalPop = buData.reduce((s, b) => s + b.pop, 0);
+  const totalNadia = buData.reduce((s, b) => s + b.nadia, 0);
+  const totalConvos = buData.reduce((s, b) => s + b.nadia * b.avgConvos, 0);
+  const totalRate = Math.round(totalNadia / totalPop * 1000) / 10;
+  const totalAvg = Math.round(totalConvos / totalNadia * 10) / 10;
+
   const bucketOverrides = {
     'Global Sales': 'Broad Adoption, Light Use',
     'Enterprise Digital Strategy': 'Needs Activation',
   };
-  const bubbleData = buData.filter(b => b.nadia >= 10).map(b => {
+  const bubbleData = buData.filter(b => b.pop >= 100).map(b => {
     let bucket, bucketColor, rec;
     const override = bucketOverrides[b.bu];
     if (override) {
@@ -221,7 +229,7 @@ function Page3() {
     else if (bucket === 'Power Users, Low Reach') { bucketColor = '#F09D00'; rec = 'Leverage super users as ambassadors to drive broader awareness and adoption.'; }
     else if (bucket === 'Broad Adoption, Light Use') { bucketColor = '#0084F0'; rec = 'Deepen engagement through integration nudges and goal-setting prompts.'; }
     else { bucketColor = '#E53935'; rec = 'Targeted onboarding campaigns and leadership sponsorship to spark initial adoption.'; }
-    return { x: b.rate, y: b.avgConvos, z: b.nadia, fullName: b.bu, bucket, bucketColor, rec };
+    return { x: b.rate, y: b.avgConvos, z: b.nadia, fullName: b.bu, bucket, bucketColor, rec, pop: b.pop };
   });
 
   const buckets = ['Champions', 'Power Users, Low Reach', 'Broad Adoption, Light Use', 'Needs Activation'];
@@ -232,6 +240,11 @@ function Page3() {
     'Needs Activation': { color: '#E53935', icon: '◎', bg: '#FDECEA' },
   };
 
+  // Find integration opportunities
+  const highTeams = buData.filter(b => b.pop >= 100 && b.teamsPct >= 50).sort((a, b) => b.teamsPct - a.teamsPct);
+  const lowTeams = buData.filter(b => b.pop >= 100 && b.teamsPct < 35 && b.nadia >= 20).sort((a, b) => a.teamsPct - b.teamsPct);
+  const lowCal = buData.filter(b => b.pop >= 100 && b.calPct < 20 && b.nadia >= 20).sort((a, b) => a.calPct - b.calPct);
+
   return (<>
     <div className="card">
       <h1>Adoption varies widely by business unit</h1>
@@ -239,30 +252,57 @@ function Page3() {
       <table className="data-table">
         <thead><tr><th>Business Unit</th><th>Addressable Population</th><th>Nadia Users</th><th>% Using Nadia</th><th>Avg Coaching Convos per User</th><th>% Activated Teams</th><th>% Integrated Calendar</th></tr></thead>
         <tbody>
-          {buData.map((r, i) => (
+          {largeBUs.map((r, i) => (
             <tr key={i}>
               <td>{r.bu}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
               <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
             </tr>
           ))}
+          {showSmall && smallBUs.map((r, i) => (
+            <tr key={`s${i}`} style={{ opacity: 0.85 }}>
+              <td>{r.bu}</td><td>{r.pop.toLocaleString()}</td><td>{r.nadia.toLocaleString()}</td>
+              <td><span style={getRateStyle(r.rate)}>{r.rate}%</span></td><td>{r.avgConvos}</td><td>{r.teamsPct}%</td><td>{r.calPct}%</td>
+            </tr>
+          ))}
+          <tr style={{ fontWeight: 600, borderTop: '2px solid #393939' }}>
+            <td>Total</td><td>{totalPop.toLocaleString()}</td><td>{totalNadia.toLocaleString()}</td>
+            <td><span style={getRateStyle(totalRate)}>{totalRate}%</span></td><td>{totalAvg}</td><td>—</td><td>—</td>
+          </tr>
         </tbody>
       </table>
+      {smallBUs.length > 0 && (
+        <button onClick={() => setShowSmall(!showSmall)} style={{
+          marginTop: 12, padding: '8px 16px', borderRadius: 8, border: '1px solid #DFDFDF',
+          background: showSmall ? '#E8E9FD' : 'white', cursor: 'pointer', fontSize: 12,
+          fontFamily: 'var(--font-primary)', color: '#393939',
+        }}>
+          {showSmall ? 'Hide' : 'Show'} {smallBUs.length} smaller business units (under 300 employees)
+        </button>
+      )}
+      <div className="narrative" style={{ marginTop: 16 }}>
+        <strong>Integration opportunities:</strong>
+        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
+          <li><strong>Low Teams activation — easy wins:</strong> {lowTeams.slice(0, 5).map(b => `${b.bu} (${b.teamsPct}%)`).join(', ')}. Pushing Teams integrations in these BUs could significantly lift engagement based on the 1.9x multiplier observed org-wide.</li>
+          <li><strong>Low Calendar integration:</strong> {lowCal.slice(0, 5).map(b => `${b.bu} (${b.calPct}%)`).join(', ')}. Calendar-connected users average 12.3 conversations vs. 6.4 without.</li>
+          <li><strong>Integration leaders to model:</strong> {highTeams.slice(0, 3).map(b => `${b.bu} (${b.teamsPct}% Teams)`).join(', ')} — study their onboarding playbook for replication.</li>
+        </ul>
+      </div>
     </div>
     <div className="card">
       <h2>BU Adoption Matrix</h2>
-      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>Quadrants based on org-wide medians: {ADOPTION_MID}% adoption rate, {CONVOS_MID} avg conversations. Bubble size = number of Nadia users.</p>
+      <p style={{ fontSize: 13, color: '#9A9A9A', marginBottom: 12 }}>BUs with 100+ employees. Quadrants based on org-wide medians: {ADOPTION_MID}% adoption rate, {CONVOS_MID} avg conversations. Bubble size proportional to Nadia users.</p>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={480}>
           <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" dataKey="x" name="Adoption %" unit="%" label={{ value: 'Adoption Rate (%)', position: 'insideBottom', offset: -10, style: { fontSize: 12 } }} />
             <YAxis type="number" dataKey="y" name="Avg Convos" label={{ value: 'Avg Conversations', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }} />
-            <ZAxis type="number" dataKey="z" range={[80, 600]} name="Users" />
+            <ZAxis type="number" dataKey="z" range={[30, 1200]} name="Users" />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
               if (!payload || !payload.length) return null;
               const d = payload[0].payload;
               return (<div style={{ background: 'white', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 8, fontSize: 12 }}>
-                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Users: {d.z.toLocaleString()}<br/><span style={{ color: d.bucketColor, fontWeight: 500 }}>{d.bucket}</span>
+                <strong>{d.fullName}</strong><br/>Adoption: {d.x}% | Avg Convos: {d.y}<br/>Nadia Users: {d.z.toLocaleString()} | Population: {d.pop.toLocaleString()}<br/><span style={{ color: d.bucketColor, fontWeight: 500 }}>{d.bucket}</span>
               </div>);
             }} />
             {buckets.map(bk => (
@@ -368,6 +408,15 @@ function Page4() {
           );
         })}
       </div>
+      <div className="narrative" style={{ marginTop: 16 }}>
+        <strong>Key takeaways:</strong>
+        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
+          <li><strong>Grade 7S is the standout.</strong> At 60.6% adoption and 11.5 avg conversations, frontline leader grades (7S) show the deepest engagement — validating Nadia's fit for the people-manager audience.</li>
+          <li><strong>Senior grades (10-12) drive the most volume.</strong> Grades 10-12 combine 53%+ adoption with 1,651 total Nadia users — the largest engaged cohort by headcount.</li>
+          <li><strong>Entry-level grades (1-4) are an untapped opportunity.</strong> Grades 1-3 have very low adoption (2-50%) but represent 400+ employees. Embedding Nadia into early-career development programs could accelerate adoption.</li>
+          <li><strong>Integration gap at lower grades.</strong> Grades 5-6 have Teams activation in the mid-30s% range vs. 46%+ for grades 10+. Closing this gap could lift engagement significantly at these large-population grades.</li>
+        </ul>
+      </div>
     </div>
   </>);
 }
@@ -452,6 +501,15 @@ function Page5() {
           );
         })}
       </div>
+      <div className="narrative" style={{ marginTop: 16 }}>
+        <strong>Key takeaways:</strong>
+        <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
+          <li><strong>People managers lead adoption.</strong> Frontline Leaders (61.1%), Sr. Managers (58.5%), and Managers (54.8%) all exceed 50% adoption — roles with direct reports naturally gravitate toward coaching tools.</li>
+          <li><strong>Individual contributors are the largest untapped segment.</strong> Specialists (2,016 pop, 38.2%), Advanced Specialists (1,977 pop, 34.3%), and Sr. Analysts (1,246 pop, 32.9%) represent over 5,000 employees with below-average adoption but meaningful engagement when they do use Nadia.</li>
+          <li><strong>Senior leadership engagement drops off.</strong> VPs (42.1%), Sr. VPs (23.3%), and Executive VPs (25.0%) show lower adoption — likely needing a different value proposition or executive-tailored coaching experiences.</li>
+          <li><strong>Sr. Managers are the engagement depth leaders.</strong> At 11.8 avg conversations (highest of any career level), they represent the ideal user profile for case studies and internal advocacy.</li>
+        </ul>
+      </div>
     </div>
   </>);
 }
@@ -464,7 +522,7 @@ function Page9() {
   const adoptionPct = Math.round(totalNadia / totalFll * 1000) / 10;
   return (<>
     <div className="card">
-      <h1>Frontline leaders: Nadia's natural power users</h1>
+      <h1>Frontline leaders show higher engagement than the broader merit population</h1>
       <h2>Frontline Leader Spotlight</h2>
       <div className="kpi-grid">
         <div className="kpi"><div className="kpi-value">{totalFll.toLocaleString()}</div><div className="kpi-label">Total FLLs at Delta</div></div>
@@ -502,8 +560,8 @@ function Page9() {
       <div className="narrative" style={{ marginTop: 12 }}>
         <strong>Key takeaways:</strong>
         <ul style={{ margin: '8px 0', paddingLeft: 20, fontSize: 13 }}>
-          <li><strong>FLLs are Nadia's most engaged audience.</strong> At {adoptionPct}% adoption and 10.2 avg conversations, they outperform the org-wide mean by 29%. This validates Nadia's product-market fit for the frontline leader population.</li>
-          <li><strong>Connect is a force multiplier.</strong> The 112 FLLs using Connect average 3.7x more conversations than non-Connect FLLs (28.0 vs. 7.7). Expanding Connect access to Airport Customer Service (33 current users out of 566 FLLs) is the highest-leverage move.</li>
+          <li><strong>FLL engagement exceeds the org-wide average.</strong> At {adoptionPct}% adoption and 10.2 avg conversations, frontline leaders outperform the merit population mean by 29%.</li>
+          <li><strong>Delta Connect users are the super users.</strong> The 121 employees who have utilized Nadia for Delta Connect average 3.7x more conversations than non-Connect users (28.0 vs. 7.7). While the sample is still small, the engagement signal is strong. Expanding Connect access to Airport Customer Service (33 current users out of 566 FLLs) is the highest-leverage move.</li>
           <li><strong>Integration gaps persist.</strong> Teams activation among FLLs ranges from 26% (TechOps) to 58% (Reservations). Closing this gap could lift engagement materially, based on the integration effect observed org-wide.</li>
           <li><strong>Inflight Services is an untapped Connect opportunity.</strong> 209 FLLs with 0 Connect users — introducing Connect here could unlock a similar engagement multiplier.</li>
         </ul>
